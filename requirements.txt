@@ -1,0 +1,7 @@
+Django~=5.1.5
+mysqlclient
+pillow
+python-decouple
+django-filter
+drf-yasg
+requests
