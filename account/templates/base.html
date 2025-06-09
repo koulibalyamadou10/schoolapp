@@ -1,0 +1,53 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Système de Gestion Scolaire{% endblock %}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 60px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            margin: 5px 0;
+            background-color: #4a90e2;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background-color: #357ab7;
+        }
+        .logout {
+            text-align: right;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        {% block content %}
+        <!-- Contenu des pages -->
+        {% endblock %}
+    </div>
+</body>
+</html>

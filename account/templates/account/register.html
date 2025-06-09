@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #e6f0fa;
+            min-height: 100vh;
+            padding-top: 60px;
+            display: flex;
+            justify-content: center;
+        }
+        .register-container {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+        h2 {
+            text-align: center;
+            color: #4a90e2;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 20px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #357ab7;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Créer un compte</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn">S'inscrire</button>
+        </form>
+        <div class="login-link">
+            <p>Déjà inscrit ? <a href="{% url 'login' %}">Se connecter</a></p>
+        </div>
+    </div>
+</body>
+</html>

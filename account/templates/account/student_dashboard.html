@@ -1,0 +1,14 @@
+{% extends '../base.html' %}
+
+{% block title%} Étudiant - Tableau de bord{% endblock %}
+
+{% block content %}
+    
+        <div class="logout">
+            <a href="{% url 'logout' %}" class="btn">Se déconnecter</a>
+        </div>
+        <h1>Bienvenue {{ request.user.full_name }}</h1>
+        <h2>Espace Étudiant</h2>
+        <a href="#" class="btn">Consulter mes notes</a>
+        <a href="#" class="btn">Voir ma moyenne générale</a>
+{% endblock %}
