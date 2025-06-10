@@ -37,6 +37,19 @@ Ce projet est un système de gestion scolaire développé avec Django et MySQL, 
 
 ---
 
+## 🌐 URLs du projet
+Après avoir lancé le serveur, vous pouvez accéder aux différentes interfaces :
+
+Connexion : http://127.0.0.1:8000/account/login/
+
+Inscription : http://127.0.0.1:8000/account/register/
+
+Tableau de bord Admin : http://127.0.0.1:8000/account/admin-dashboard/
+
+Tableau de bord Enseignant : http://127.0.0.1:8000/account/teacher-dashboard/
+
+Tableau de bord Étudiant : http://127.0.0.1:8000/account/student-dashboard/
+
 ## ⚙️ Installation
 
 ```bash
