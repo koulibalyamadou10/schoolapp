@@ -50,6 +50,20 @@ Tableau de bord Enseignant : http://127.0.0.1:8000/account/teacher-dashboard/
 
 Tableau de bord Étudiant : http://127.0.0.1:8000/account/student-dashboard/
 
+## 🔐 Système de Permissions
+Le projet utilise des décorateurs personnalisés pour gérer efficacement les accès :
+
+@role_required(['admin'])
+@role_required(['teacher'])
+@role_required(['student'])
+
+Rôles disponibles :
+admin : Accès aux vues réservées aux administrateurs
+
+teacher : Accès aux vues réservées aux professeurs
+
+student : Accès aux vues réservées aux étudiants
+
 ## ⚙️ Installation
 
 ```bash
