@@ -13,22 +13,21 @@ def teacher_dashboard(request):
     subjects = Subject.objects.filter(teacher=teacher)
 
     if request.method == "POST":
-        # Récupération des données du formulaire modal
+        
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         specialty = request.POST.get('specialty')
 
-        # Validation simple (tu peux améliorer si tu veux)
+        
         if first_name and last_name and specialty:
             teacher.first_name = first_name
             teacher.last_name = last_name
             teacher.specialty = specialty
             teacher.save()
-            # Optionnel : message succès avec django.contrib.messages
-            # messages.success(request, "Profil mis à jour avec succès")
+            
             return redirect('teacher_dashboard')
 
-        # Sinon, tu peux gérer les erreurs ici
+        
 
     return render(request, 'teacher/dashboard.html', {
         'teacher': teacher,
