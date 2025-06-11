@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Notes & Statistiques</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: #343a40;
+            color: #fff;
+        }
+        .sidebar a {
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            padding: 12px 20px;
+            border-radius: 4px;
+        }
+        .sidebar a.active, .sidebar a:hover {
+            background: #495057;
+        }
+        .sidebar .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 20px 20px 10px 20px;
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-none d-md-block sidebar py-4">
+            {% include 'account/sidebar.html' %}
+        </nav>
+        <!-- Main content -->
+        <main class="col-md-10 ms-sm-auto px-4 py-5">
+            <h2 class="mb-4 text-center">Notes & Statistiques</h2>
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card text-bg-primary shadow-sm text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Nombre total de notes</h5>
+                            <p class="display-6">{{ total_notes }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-bg-success shadow-sm text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Moyenne générale</h5>
+                            <p class="display-6">{{ moyenne_generale }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h4 class="mt-5 mb-3">Statistiques par matière</h4>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Matière</th>
+                        <th>Nombre de notes</th>
+                        <th>Moyenne</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for stat in stats_par_matiere %}
+                    <tr>
+                        <td>{{ stat.subject.name }}</td>
+                        <td>{{ stat.count }}</td>
+                        <td>{{ stat.average }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center">Aucune matière trouvée.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <h4 class="mt-5 mb-3">Dernières notes enregistrées</h4>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Étudiant</th>
+                        <th>Matière</th>
+                        <th>Note</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for note in notes %}
+                    <tr>
+                        <td>{{ note.student }}</td>
+                        <td>{{ note.subject.name }}</td>
+                        <td>{{ note.grade }}</td>
+                        <td>{{ note.date|date:"d/m/Y" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">Aucune note enregistrée.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </main>
+    </div>
+</div>
+</body>
+</html>
