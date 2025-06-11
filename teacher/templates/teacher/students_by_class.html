@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Étudiants par Classe</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .class-section {
+      background: white;
+      padding: 20px;
+      margin-bottom: 25px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h2 {
+      font-weight: 700;
+      margin-bottom: 30px;
+      color: #212529;
+      text-align: center;
+    }
+    h5 {
+      font-weight: 600;
+      color: #0d6efd;
+    }
+  </style>
+</head>
+<body>
+<div class="container mt-5">
+  <h2><i class="bi bi-people-fill me-2"></i>Étudiants par classe</h2>
+
+  {% if classes %}
+    {% for class_name, student_list in classes.items %}
+      <div class="class-section">
+        <h5><i class="bi bi-building me-2"></i>Classe : {{ class_name }}</h5>
+        <table class="table table-striped table-hover align-middle">
+          <thead class="table-primary">
+            <tr>
+              <th scope="col"><i class="bi bi-person-badge me-1"></i>Nom</th>
+              <th scope="col"><i class="bi bi-person me-1"></i>Prénom</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for student in student_list %}
+              <tr>
+                <td>{{ student.last_name }}</td>
+                <td>{{ student.first_name }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="text-center text-muted fst-italic">Aucune classe ou étudiant trouvé.</p>
+  {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
