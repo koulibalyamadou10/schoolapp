@@ -11,3 +11,13 @@ def role_required(allowed_roles):
             return redirect('login')  # ou créer une page '403'
         return wrapper
     return decorator
+
+# Décorateurs spécifiques pour chaque rôle
+def admin_required(view_func):
+    return role_required(['admin'])(view_func)
+
+def teacher_required(view_func):
+    return role_required(['teacher'])(view_func)
+
+def student_required(view_func):
+    return role_required(['student'])(view_func)

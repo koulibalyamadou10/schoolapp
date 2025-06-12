@@ -81,6 +81,7 @@ Après avoir lancé le serveur, vous pouvez accéder aux différentes interfaces
 - Profil : http://127.0.0.1:8000/account/profile/
 - Changement de mot de passe : http://127.0.0.1:8000/account/profile/change-password/
 - Réinitialisation de mot de passe : http://127.0.0.1:8000/account/password-reset/
+
 - Tableaux de bord :
   - Admin : http://127.0.0.1:8000/account/admin-dashboard/
   - Enseignant : http://127.0.0.1:8000/account/teacher-dashboard/
