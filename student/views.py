@@ -26,21 +26,41 @@ def student_list(request):
     
     return render(request, 'student/student_list.html', {'students': students, 'query': query})
 
+
+def unauthorized_view(request, exception=None):
+    return render(request, '401.html', status=401)
+
 @admin_required
 def student_create(request):
     if request.method == 'POST':
         form = StudentRegistrationForm(request.POST)
         if form.is_valid():
+            from account.models import User
             student = form.save(commit=False)
-            # Générer un numéro d'étudiant unique
+            # Créer un utilisateur associé
+            username = f"{student.first_name.lower()}.{student.last_name.lower()}"
+            password = 'admin123'
+            user = User.objects.create_user(
+                username=username,
+                password=password,
+                first_name=student.first_name,
+                last_name=student.last_name
+            )
+            student.user = user
             student.student_id = f"STD{Student.objects.count() + 1:04d}"
             student.save()
-            messages.success(request, 'Étudiant créé avec succès.')
-            return redirect('student:student_detail', pk=student.pk)
+            
+            messages.success(request, f'Étudiant créé avec succès. Identifiant: {username}')
+            return redirect('student:student-detail', pk=student.pk)
     else:
         form = StudentRegistrationForm()
     
-    return render(request, 'student/student_form.html', {'form': form, 'title': 'Créer un étudiant'})
+    context = {
+        'form': form,
+        'title': 'Créer un étudiant',
+        'form_errors': form.errors if request.method == 'POST' else None
+    }
+    return render(request, 'student/student_form.html', context)
 
 @admin_required
 def student_update(request, pk):
@@ -98,6 +118,32 @@ def academic_record_update(request, pk):
             return redirect('student:student_detail', pk=academic_record.student.pk)
     else:
         form = AcademicRecordForm(instance=academic_record)
+
+@student_required
+def student_grades(request):
+    # Récupérer l'étudiant connecté
+    student = get_object_or_404(Student, user=request.user)
+    # Récupérer tous les dossiers académiques de l'étudiant
+    academic_records = student.academic_records.all().order_by('-academic_year', '-semester')
+    
+    context = {
+        'student': student,
+        'academic_records': academic_records,
+    }
+    return render(request, 'student/student_grades.html', context)
+
+@student_required
+def student_schedule(request):
+    # Récupérer l'étudiant connecté
+    student = get_object_or_404(Student, user=request.user)
+    # Vous devrez ajouter la logique pour récupérer l'emploi du temps
+    # en fonction de la classe de l'étudiant
+    
+    context = {
+        'student': student,
+        # 'schedule': schedule,  # À implémenter selon votre modèle d'emploi du temps
+    }
+    return render(request, 'student/student_schedule.html', context)
     
     return render(request, 'student/academic_record_form.html', {
         'form': form,
@@ -115,3 +161,4 @@ def student_dashboard(request):
         'academic_records': academic_records,
     }
     return render(request, 'student/dashboard.html', context)
+

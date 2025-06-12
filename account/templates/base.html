@@ -11,9 +11,40 @@
             margin: 0;
             padding: 0;
         }
+        .navbar {
+            background: #2c3e50;
+            padding: 1rem;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .nav-group {
+            display: flex;
+            gap: 1rem;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .nav-link:hover {
+            background-color: #34495e;
+        }
         .container {
             max-width: 800px;
-            margin: 60px auto;
+            margin: 80px auto 20px;
             background: white;
             padding: 30px;
             border-radius: 12px;
@@ -44,6 +75,37 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    <nav class="navbar">
+        <div class="nav-links">
+            <div class="nav-group">
+                {% if user.is_authenticated %}
+                    {% if user.role == 'admin' %}
+                        <a href="{% url 'account:dashboard' %}" class="nav-link">Tableau de bord Admin</a>
+                        <a href="{% url 'student:student-list' %}" class="nav-link">Gestion Étudiants</a>
+                        <a href="" class="nav-link">Gestion Enseignants</a>
+                    {% elif user.role == 'teacher' %}
+                        <a href="{% url 'teacher:teacher-dashboard' %}" class="nav-link">Tableau de bord Enseignant</a>
+                        <a href="{% url 'teacher:teacher-subjects' %}" class="nav-link">Mes Matières</a>
+                        <a href="{% url 'teacher:teacher-schedule' %}" class="nav-link">Mon Emploi du temps</a>
+                        <a href="{% url 'teacher-grades' %}" class="nav-link">Gestion des Notes</a>
+                    {% elif user.role == 'student' %}
+                        <a href="{% url 'student:dashboard' %}" class="nav-link">Tableau de bord Étudiant</a>
+                        <a href="{% url 'student:student-grades' %}" class="nav-link">Mes Notes</a>
+                        <a href="{% url 'student:student-schedule' %}" class="nav-link">Mon Emploi du temps</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="nav-group">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'account:profile' %}" class="nav-link">Mon Profil</a>
+                    <a href="{% url 'account:logout' %}" class="nav-link">Déconnexion</a>
+                {% else %}
+                    <a href="{% url 'account:login' %}" class="nav-link">Connexion</a>
+                    <a href="{% url 'account:register' %}" class="nav-link">Inscription</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
     <div class="container">
         {% block content %}
         <!-- Contenu des pages -->

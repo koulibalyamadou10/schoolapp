@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %}Mon Emploi du temps{% endblock %}
+
+{% block content %}
+<h1>Mon Emploi du temps</h1>
+
+<div class="student-info">
+    <h2>{{ student.get_full_name }}</h2>
+    <p>Classe : {{ student.student_class }}</p>
+</div>
+
+<div class="schedule-container">
+    <div class="schedule-header">
+        <button class="btn btn-primary" id="prevWeek">&lt; Semaine précédente</button>
+        <h3 id="currentWeek">Semaine du 1 au 7 janvier 2024</h3>
+        <button class="btn btn-primary" id="nextWeek">Semaine suivante &gt;</button>
+    </div>
+
+    <div class="timetable">
+        <div class="time-column">
+            <div class="time-header">Horaire</div>
+            {% for hour in '8,9,10,11,12,13,14,15,16,17'|split:',' %}
+            <div class="time-slot">{{ hour }}:00</div>
+            {% endfor %}
+        </div>
+
+        {% for day in 'Lundi,Mardi,Mercredi,Jeudi,Vendredi'|split:',' %}
+        <div class="day-column">
+            <div class="day-header">{{ day }}</div>
+            {% for hour in '8,9,10,11,12,13,14,15,16,17'|split:',' %}
+            <div class="schedule-slot">
+                <!-- Les cours seront ajoutés dynamiquement ici -->
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .student-info {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .schedule-container {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .schedule-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .timetable {
+        display: flex;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .time-column, .day-column {
+        flex: 1;
+        min-width: 100px;
+    }
+
+    .time-column {
+        background-color: #f8f9fa;
+        flex: 0 0 80px;
+    }
+
+    .time-header, .day-header {
+        padding: 1rem;
+        text-align: center;
+        background-color: #4a90e2;
+        color: white;
+        font-weight: bold;
+    }
+
+    .time-slot {
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .schedule-slot {
+        height: 60px;
+        border-left: 1px solid #dee2e6;
+        border-bottom: 1px solid #dee2e6;
+        padding: 0.5rem;
+    }
+
+    .course {
+        background-color: #e3f2fd;
+        border-radius: 4px;
+        padding: 0.5rem;
+        margin: -0.5rem;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .course:hover {
+        background-color: #bbdefb;
+    }
+
+    .course-name {
+        font-weight: bold;
+        font-size: 0.9em;
+    }
+
+    .course-teacher {
+        font-size: 0.8em;
+        color: #666;
+    }
+
+    .course-room {
+        font-size: 0.8em;
+        color: #666;
+    }
+</style>
+
+<script>
+    // Cette fonction sera implémentée pour charger les cours de la semaine
+    function loadWeekSchedule(weekStart) {
+        // Faire une requête AJAX pour obtenir les cours de la semaine
+        // et les afficher dans les slots appropriés
+    }
+
+    document.getElementById('prevWeek').addEventListener('click', function() {
+        // Implémenter la navigation vers la semaine précédente
+    });
+
+    document.getElementById('nextWeek').addEventListener('click', function() {
+        // Implémenter la navigation vers la semaine suivante
+    });
+
+    // Charger l'emploi du temps de la semaine courante au chargement de la page
+    loadWeekSchedule(new Date());
+</script>
+{% endblock %}

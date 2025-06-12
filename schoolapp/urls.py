@@ -18,6 +18,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+handler401 = 'account.views.unauthorized_view'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('account.urls')),

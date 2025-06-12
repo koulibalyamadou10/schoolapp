@@ -11,6 +11,10 @@ from django.utils.encoding import force_bytes
 from django.urls import reverse
 from .forms import UserRegistrationForm, UserProfileForm
 from .models import User
+from .decorators import role_required
+
+def unauthorized_view(request):
+    return render(request, 'account/401.html', status=401)
 
 def login_view(request):
     if request.method == 'POST':
@@ -20,11 +24,11 @@ def login_view(request):
         if user is not None:
             login(request, user)
             if user.role == 'admin':
-                return redirect('admin_dashboard')
+                return redirect('account:dashboard')
             elif user.role == 'teacher':
-                return redirect('teacher_dashboard')
+                return redirect('teacher:dashboard')
             else:
-                return redirect('student_dashboard')
+                return redirect('student:dashboard')
         else:
             messages.error(request, 'Identifiants invalides')
     return render(request, 'account/login.html')
@@ -37,7 +41,7 @@ def register_view(request):
             user.set_password(form.cleaned_data['password'])
             user.save()
             messages.success(request, 'Compte créé avec succès')
-            return redirect('login')
+            return redirect('account:login')
     else:
         form = UserRegistrationForm()
     return render(request, 'account/register.html', {'form': form})
@@ -45,7 +49,7 @@ def register_view(request):
 @login_required
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect('account:login')
 
 @login_required
 def profile_view(request):
@@ -54,7 +58,7 @@ def profile_view(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Profil mis à jour avec succès')
-            return redirect('profile')
+            return redirect('account:profile')
     else:
         form = UserProfileForm(instance=request.user)
     return render(request, 'account/profile.html', {'form': form})
@@ -67,7 +71,7 @@ def change_password_view(request):
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Votre mot de passe a été changé avec succès')
-            return redirect('profile')
+            return redirect('account:profile')
         else:
             messages.error(request, 'Veuillez corriger les erreurs ci-dessous')
     else:
@@ -124,13 +128,8 @@ def password_reset_confirm_view(request, uidb64, token):
         return render(request, 'account/password_reset_confirm.html', {'validlink': False})
 
 @login_required
+@role_required(['admin'])
 def admin_dashboard(request):
     return render(request, 'account/admin_dashbord.html')
 
-@login_required
-def teacher_dashboard(request):
-    return render(request, 'account/teacher_dashboard.html')
-
-@login_required
-def student_dashboard(request):
-    return render(request, 'account/student_dashboard.html')
+    

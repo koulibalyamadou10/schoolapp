@@ -5,13 +5,21 @@ from .models import Student, AcademicRecord
 class StudentRegistrationForm(forms.ModelForm):
     class Meta:
         model = Student
-        exclude = ['user', 'is_active', 'academic_status']
+        exclude = ['user', 'is_active', 'academic_status', 'student_id', 'registration_date']
         widgets = {
-            'birth_date': forms.DateInput(attrs={'type': 'date'}),
-            'medical_info': forms.Textarea(attrs={'rows': 3}),
-            'allergies': forms.Textarea(attrs={'rows': 2}),
-            'address': forms.Textarea(attrs={'rows': 3}),
+            'birth_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'medical_info': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'allergies': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+            'address': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
         }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Ajouter des classes Bootstrap à tous les champs
+        for field in self.fields:
+            if field not in self.Meta.widgets:
+                if self.fields[field].widget.__class__.__name__ in ['TextInput', 'NumberInput', 'EmailInput', 'PasswordInput', 'Select']:
+                    self.fields[field].widget.attrs.update({'class': 'form-control'})
 
 class StudentUpdateForm(forms.ModelForm):
     class Meta:

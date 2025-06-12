@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Notes{% endblock %}
+
+{% block content %}
+<h1>Mes Notes</h1>
+
+<div class="student-info">
+    <h2>{{ student.get_full_name }}</h2>
+    <p>Classe : {{ student.student_class }}</p>
+</div>
+
+<div class="academic-records">
+    {% if academic_records %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Année Académique</th>
+                    <th>Semestre</th>
+                    <th>Moyenne Générale</th>
+                    <th>Classement</th>
+                    <th>Taux de Présence</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for record in academic_records %}
+                <tr>
+                    <td>{{ record.academic_year }}</td>
+                    <td>{{ record.semester }}</td>
+                    <td>
+                        <div class="grade-display">
+                            {{ record.average_grade }}/20
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: {{ record.average_grade|multiply:5 }}%" 
+                                     aria-valuenow="{{ record.average_grade }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="20">
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ record.class_rank }}</td>
+                    <td>
+                        <div class="attendance-display">
+                            {{ record.attendance_rate }}%
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" 
+                                     style="width: {{ record.attendance_rate }}%" 
+                                     aria-valuenow="{{ record.attendance_rate }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="100">
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% if record.comments %}
+                <tr class="comments-row">
+                    <td colspan="5">
+                        <strong>Commentaires :</strong> {{ record.comments }}
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="no-records">Aucun dossier académique disponible.</p>
+    {% endif %}
+</div>
+
+<style>
+    .student-info {
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .table {
+        width: 100%;
+        margin-bottom: 1rem;
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    
+    .table th {
+        background-color: #4a90e2;
+        color: white;
+        padding: 1rem;
+    }
+    
+    .table td {
+        padding: 1rem;
+        border-top: 1px solid #dee2e6;
+    }
+    
+    .progress {
+        height: 8px;
+        margin-top: 5px;
+        background-color: #e9ecef;
+        border-radius: 4px;
+    }
+    
+    .progress-bar {
+        background-color: #4a90e2;
+        border-radius: 4px;
+    }
+    
+    .comments-row {
+        background-color: #f8f9fa;
+    }
+    
+    .no-records {
+        text-align: center;
+        padding: 2rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+    }
+</style>
+{% endblock %}

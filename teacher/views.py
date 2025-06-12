@@ -8,6 +8,7 @@ from .forms import TeacherProfileForm, ScheduleForm, AttendanceForm
 from subject.models import Subject
 from student.models import Student
 from grade.models import Grade
+from account.decorators import role_required
 
 @login_required
 def teacher_profile(request):
@@ -111,3 +112,7 @@ def manage_attendance(request):
         'today': today
     })
 
+@login_required
+@role_required(['teacher'])
+def teacher_dashboard(request):
+    return render(request, 'teacher/dashboard.html')

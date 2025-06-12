@@ -1,10 +1,12 @@
 from django.urls import path
 from .views import (
     login_view, register_view, logout_view,
-    admin_dashboard, teacher_dashboard, student_dashboard,
-    profile_view, change_password_view,
-    password_reset_view, password_reset_confirm_view
+    admin_dashboard, profile_view, change_password_view,
+    password_reset_view, password_reset_confirm_view,
+    unauthorized_view
 )
+
+app_name = 'account'
 
 urlpatterns = [
     # Authentication URLs
@@ -22,7 +24,8 @@ urlpatterns = [
          password_reset_confirm_view, name='password_reset_confirm'),
     
     # Dashboard URLs
-    path('admin-dashboard/', admin_dashboard, name='admin_dashboard'),
-    path('teacher-dashboard/', teacher_dashboard, name='teacher_dashboard'),
-    path('student-dashboard/', student_dashboard, name='student_dashboard'),
+    path('admin-dashboard/', admin_dashboard, name='dashboard'),
+    
+    # Error Pages
+    path('unauthorized/', unauthorized_view, name='unauthorized'),
 ]

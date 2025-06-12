@@ -16,7 +16,7 @@ class Student(models.Model):
     first_name = models.CharField(max_length=100, verbose_name='Prénom')
     last_name = models.CharField(max_length=100, verbose_name='Nom')
     birth_date = models.DateField(verbose_name='Date de naissance')
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name='Genre')
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name='Genre', default='M')
     
     # Informations académiques
     student_class = models.CharField(max_length=100, verbose_name='Classe')  # ex: "3ème A"
