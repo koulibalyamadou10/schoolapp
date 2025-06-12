@@ -1,5 +1,4 @@
-"""
-URL configuration for schoolapp project.
+"""URL configuration for schoolapp project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/
@@ -19,12 +18,14 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+handler401 = 'account.views.unauthorized_view'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('account.urls')),
-    path('', include('student.urls')),
-    path('', include('teacher.urls')),
-    path('', include('subject.urls')),
-    path('', include('grade.urls')),
+    path('student/', include('student.urls')),
+    path('teacher/', include('teacher.urls')),
+    path('subject/', include('subject.urls')),
+    path('grade/', include('grade.urls')),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

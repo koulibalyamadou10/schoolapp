@@ -1,0 +1,78 @@
+{% extends '../base.html' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .profile-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    .form-group label {
+        font-weight: bold;
+    }
+    .form-group input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    .error-message {
+        color: red;
+        font-size: 14px;
+    }
+    .success-message {
+        color: green;
+        font-size: 14px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="profile-container">
+        <h1>Mon Profil</h1>
+        
+        {% if messages %}
+            {% for message in messages %}
+                <div class="{% if message.tags %}{{ message.tags }}-message{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" class="profile-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="first_name">Prénom</label>
+                <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Nom</label>
+                <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="{{ user.email }}" required>
+            </div>
+            <div class="form-group">
+                <label for="username">Nom d'utilisateur</label>
+                <input type="text" id="username" name="username" value="{{ user.username }}" required>
+            </div>
+            <button type="submit" class="btn">Mettre à jour le profil</button>
+        </form>
+
+        <div style="margin-top: 20px;">
+            <a href="{% url 'change_password' %}" class="btn">Changer le mot de passe</a>
+            <a href="{% url 'dashboard' %}" class="btn" style="background-color: #6c757d;">Retour au tableau de bord</a>
+        </div>
+    </div>
+{% endblock %}

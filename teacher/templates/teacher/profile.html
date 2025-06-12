@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Mon Profil Enseignant{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Mon Profil Enseignant</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" class="profile-form">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                        <div class="error-message">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn">Mettre à jour</button>
+    </form>
+
+    <div class="navigation-links">
+        <a href="{% url 'teacher:subjects' %}" class="btn">Mes Matières</a>
+        <a href="{% url 'teacher:schedule' %}" class="btn">Mon Emploi du temps</a>
+        <a href="{% url 'teacher:grades' %}" class="btn">Gestion des Notes</a>
+        <a href="{% url 'teacher:attendance' %}" class="btn">Suivi des Présences</a>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .profile-form {
+        margin: 20px 0;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    .error-message {
+        color: red;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    .navigation-links {
+        margin-top: 30px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 10px;
+    }
+    .btn {
+        text-align: center;
+    }
+</style>
+{% endblock %}

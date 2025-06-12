@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}Accès Non Autorisé{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div style="text-align: center; padding: 50px 0;">
+        <h1 style="font-size: 72px; margin-bottom: 20px; color: #e74c3c;">401</h1>
+        <h2 style="margin-bottom: 30px; color: #2c3e50;">Accès Non Autorisé</h2>
+        <p style="font-size: 18px; color: #7f8c8d; margin-bottom: 30px;">
+            Désolé, vous n'avez pas les autorisations nécessaires pour accéder à cette page.
+            Votre rôle actuel ne permet pas d'accéder à cette ressource.
+        </p>
+        <div style="margin-top: 30px;">
+            <a href="{% url 'account:login' %}" class="btn" style="margin-right: 15px;">Se connecter</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestion des Notes{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Gestion des Notes</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="grades-container">
+        <div class="add-grade">
+            <h2>Ajouter une note</h2>
+            <form method="POST" class="grade-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="subject">Matière</label>
+                    <select name="subject" id="subject" class="form-control" required>
+                        {% for subject in subjects %}
+                            <option value="{{ subject.id }}">{{ subject.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="student">Étudiant</label>
+                    <select name="student" id="student" class="form-control" required>
+                        {% for student in students %}
+                            <option value="{{ student.id }}">{{ student.user.first_name }} {{ student.user.last_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="grade">Note</label>
+                    <input type="number" name="grade" id="grade" class="form-control" min="0" max="20" step="0.5" required>
+                </div>
+                <button type="submit" class="btn">Ajouter la note</button>
+            </form>
+        </div>
+
+        <div class="grades-list">
+            <h2>Notes récentes</h2>
+            <div class="table-responsive">
+                <table class="grades-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Étudiant</th>
+                            <th>Matière</th>
+                            <th>Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grade in grades %}
+                            <tr>
+                                <td>{{ grade.date|date:"d/m/Y" }}</td>
+                                <td>{{ grade.student.user.first_name }} {{ grade.student.user.last_name }}</td>
+                                <td>{{ grade.subject.name }}</td>
+                                <td>{{ grade.grade }}/20</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="4" class="no-data">Aucune note enregistrée</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <a href="{% url 'teacher:profile' %}" class="btn secondary">Retour au profil</a>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .grades-container {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 30px;
+        margin: 20px 0;
+    }
+    .add-grade {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .grade-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    .grades-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    .grades-table th,
+    .grades-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    .grades-table th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+    .grades-table tr:hover {
+        background-color: #f8f9fa;
+    }
+    .no-data {
+        text-align: center;
+        color: #6c757d;
+        font-style: italic;
+    }
+    .navigation {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .btn.secondary {
+        background-color: #6c757d;
+    }
+    .btn.secondary:hover {
+        background-color: #5a6268;
+    }
+    @media (max-width: 1000px) {
+        .grades-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}

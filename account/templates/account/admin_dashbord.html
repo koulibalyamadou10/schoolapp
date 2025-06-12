@@ -4,13 +4,13 @@
 
 {% block content %}
     <div class="logout">
-        <a href="{% url 'logout' %}" class="btn">Se déconnecter</a>
+        <a href="{% url 'account:logout' %}" class="btn">Se déconnecter</a>
     </div>
     <h1>Bonjour {{ request.user.full_name }}</h1>
     <h2>Tableau de bord Administrateur</h2>
     <ul>
         <li><a href="#" class="btn">Gérer les utilisateurs</a></li>
-        <li><a href="#" class="btn">Gérer les étudiants</a></li>
+        <li><a href="{% url 'student:student-list' %}" class="btn">Gérer les étudiants</a></li>
         <li><a href="#" class="btn">Gérer les enseignants</a></li>
         <li><a href="#" class="btn">Gérer les matières</a></li>
         <li><a href="#" class="btn">Voir les statistiques</a></li>

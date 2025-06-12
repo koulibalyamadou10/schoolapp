@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block title %}Mon Emploi du temps{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Mon Emploi du temps</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="schedule-container">
+        <div class="add-course">
+            <h2>Ajouter un cours</h2>
+            <form method="POST" class="schedule-form">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                                <div class="error-message">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn">Ajouter</button>
+            </form>
+        </div>
+
+        <div class="timetable">
+            <h2>Emploi du temps hebdomadaire</h2>
+            <div class="schedule-grid">
+                {% regroup schedules by get_day_of_week_display as daily_schedules %}
+                {% for day in daily_schedules %}
+                    <div class="day-column">
+                        <h3>{{ day.grouper }}</h3>
+                        {% for schedule in day.list %}
+                            <div class="course-card">
+                                <div class="time">{{ schedule.start_time|time:"H:i" }} - {{ schedule.end_time|time:"H:i" }}</div>
+                                <div class="subject">{{ schedule.subject.name }}</div>
+                                <div class="classroom">Salle: {{ schedule.classroom }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <a href="{% url 'teacher:profile' %}" class="btn secondary">Retour au profil</a>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .schedule-container {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 30px;
+        margin: 20px 0;
+    }
+    .add-course {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .schedule-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .form-group {
+        margin-bottom: 10px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    .error-message {
+        color: red;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    .schedule-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 15px;
+        overflow-x: auto;
+    }
+    .day-column {
+        min-width: 150px;
+    }
+    .day-column h3 {
+        text-align: center;
+        margin-bottom: 15px;
+        color: #2c3e50;
+    }
+    .course-card {
+        background: white;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .course-card .time {
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    .course-card .subject {
+        color: #4a90e2;
+        margin: 5px 0;
+    }
+    .course-card .classroom {
+        font-size: 0.9em;
+        color: #6c757d;
+    }
+    .navigation {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .btn.secondary {
+        background-color: #6c757d;
+    }
+    .btn.secondary:hover {
+        background-color: #5a6268;
+    }
+    @media (max-width: 1000px) {
+        .schedule-container {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
