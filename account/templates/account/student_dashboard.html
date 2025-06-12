@@ -1,14 +1,411 @@
 {% extends '../base.html' %}
 
-{% block title%} Étudiant - Tableau de bord{% endblock %}
+{% block title %}Étudiant - Tableau de bord{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+    .student-dashboard {
+        padding: 2rem 0;
+    }
+    
+    .welcome-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .welcome-section h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 300;
+    }
+    
+    .welcome-section p {
+        margin: 0.5rem 0 0 0;
+        opacity: 0.9;
+        font-size: 1.1rem;
+    }
+    
+    .performance-overview {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .performance-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+    
+    .performance-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .performance-card.average {
+        border-top: 4px solid #27ae60;
+    }
+    
+    .performance-card.rank {
+        border-top: 4px solid #f39c12;
+    }
+    
+    .performance-card.attendance {
+        border-top: 4px solid #3498db;
+    }
+    
+    .performance-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .performance-card.average .performance-icon { color: #27ae60; }
+    .performance-card.rank .performance-icon { color: #f39c12; }
+    .performance-card.attendance .performance-icon { color: #3498db; }
+    
+    .performance-value {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+        margin: 0;
+    }
+    
+    .performance-label {
+        color: #7f8c8d;
+        font-size: 1rem;
+        margin: 0.5rem 0 0 0;
+    }
+    
+    .main-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .content-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .card-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #ecf0f1;
+    }
+    
+    .card-header i {
+        font-size: 1.5rem;
+        color: #667eea;
+        margin-right: 0.5rem;
+    }
+    
+    .card-header h3 {
+        margin: 0;
+        color: #2c3e50;
+    }
+    
+    .grades-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .grades-table th,
+    .grades-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #ecf0f1;
+    }
+    
+    .grades-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .grade-badge {
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        color: white;
+        font-weight: bold;
+        font-size: 0.9rem;
+    }
+    
+    .grade-excellent { background: #27ae60; }
+    .grade-good { background: #f39c12; }
+    .grade-average { background: #e67e22; }
+    .grade-poor { background: #e74c3c; }
+    
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #ecf0f1;
+    }
+    
+    .info-item:last-child {
+        border-bottom: none;
+    }
+    
+    .info-label {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .info-value {
+        color: #7f8c8d;
+    }
+    
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .action-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    
+    .action-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #667eea;
+    }
+    
+    .action-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #2c3e50;
+    }
+    
+    .action-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.8rem 2rem;
+        border: none;
+        border-radius: 25px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .logout-section {
+        text-align: right;
+        margin-bottom: 1rem;
+    }
+    
+    .logout-btn {
+        background: #e74c3c;
+        color: white;
+        padding: 0.6rem 1.5rem;
+        border: none;
+        border-radius: 20px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .logout-btn:hover {
+        background: #c0392b;
+        color: white;
+        text-decoration: none;
+    }
+    
+    @media (max-width: 768px) {
+        .main-content {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-    
-        <div class="logout">
-            <a href="{% url 'logout' %}" class="btn">Se déconnecter</a>
+<div class="student-dashboard">
+    <div class="logout-section">
+        <a href="{% url 'account:logout' %}" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Se déconnecter
+        </a>
+    </div>
+
+    <div class="welcome-section">
+        <h1><i class="fas fa-user-graduate"></i> Bienvenue {{ request.user.full_name }}</h1>
+        <p>Espace Étudiant - Suivez votre progression académique</p>
+    </div>
+
+    <!-- Vue d'ensemble des performances -->
+    <div class="performance-overview">
+        <div class="performance-card average">
+            <div class="performance-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h3 class="performance-value">15.2/20</h3>
+            <p class="performance-label">Moyenne générale</p>
         </div>
-        <h1>Bienvenue {{ request.user.full_name }}</h1>
-        <h2>Espace Étudiant</h2>
-        <a href="#" class="btn">Consulter mes notes</a>
-        <a href="#" class="btn">Voir ma moyenne générale</a>
+        
+        <div class="performance-card rank">
+            <div class="performance-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h3 class="performance-value">5<sup>e</sup></h3>
+            <p class="performance-label">Classement</p>
+        </div>
+        
+        <div class="performance-card attendance">
+            <div class="performance-icon">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <h3 class="performance-value">92%</h3>
+            <p class="performance-label">Assiduité</p>
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="main-content">
+        <!-- Notes récentes -->
+        <div class="content-card">
+            <div class="card-header">
+                <i class="fas fa-star"></i>
+                <h3>Mes dernières notes</h3>
+            </div>
+            
+            <table class="grades-table">
+                <thead>
+                    <tr>
+                        <th>Matière</th>
+                        <th>Note</th>
+                        <th>Date</th>
+                        <th>Appréciation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Mathématiques</td>
+                        <td><span class="grade-badge grade-excellent">18/20</span></td>
+                        <td>15/01/2024</td>
+                        <td>Excellent travail</td>
+                    </tr>
+                    <tr>
+                        <td>Français</td>
+                        <td><span class="grade-badge grade-good">14/20</span></td>
+                        <td>12/01/2024</td>
+                        <td>Bien</td>
+                    </tr>
+                    <tr>
+                        <td>Histoire</td>
+                        <td><span class="grade-badge grade-good">16/20</span></td>
+                        <td>10/01/2024</td>
+                        <td>Très bien</td>
+                    </tr>
+                    <tr>
+                        <td>Anglais</td>
+                        <td><span class="grade-badge grade-average">12/20</span></td>
+                        <td>08/01/2024</td>
+                        <td>Peut mieux faire</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Informations personnelles -->
+        <div class="content-card">
+            <div class="card-header">
+                <i class="fas fa-user"></i>
+                <h3>Mes informations</h3>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Classe</span>
+                <span class="info-value">3ème A</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Numéro étudiant</span>
+                <span class="info-value">STD2024001</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Année scolaire</span>
+                <span class="info-value">2023-2024</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Semestre</span>
+                <span class="info-value">2ème Semestre</span>
+            </div>
+            
+            <div class="info-item">
+                <span class="info-label">Statut</span>
+                <span class="info-value">
+                    <span class="grade-badge grade-excellent">Actif</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="quick-actions">
+        <div class="action-card">
+            <div class="action-icon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <h3 class="action-title">Consulter mes notes</h3>
+            <a href="{% url 'student:student-grades' %}" class="action-btn">Voir détails</a>
+        </div>
+
+        <div class="action-card">
+            <div class="action-icon">
+                <i class="fas fa-calculator"></i>
+            </div>
+            <h3 class="action-title">Ma moyenne générale</h3>
+            <a href="#" class="action-btn">Calculer</a>
+        </div>
+
+        <div class="action-card">
+            <div class="action-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h3 class="action-title">Mon emploi du temps</h3>
+            <a href="{% url 'student:student-schedule' %}" class="action-btn">Consulter</a>
+        </div>
+
+        <div class="action-card">
+            <div class="action-icon">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <h3 class="action-title">Bulletin de notes</h3>
+            <a href="#" class="action-btn">Télécharger</a>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -115,4 +115,25 @@ def manage_attendance(request):
 @login_required
 @role_required(['teacher'])
 def teacher_dashboard(request):
-    return render(request, 'teacher/dashboard.html')
+    teacher = get_object_or_404(Teacher, user=request.user)
+    
+    # Statistiques pour le tableau de bord
+    subjects = Subject.objects.filter(teacher=teacher)
+    total_students = Student.objects.filter(grades__subject__in=subjects).distinct().count()
+    total_grades = Grade.objects.filter(subject__in=subjects).count()
+    
+    # Cours d'aujourd'hui
+    today = date.today()
+    classes_today = Schedule.objects.filter(
+        teacher=teacher,
+        day_of_week=today.isoweekday()
+    ).count()
+    
+    context = {
+        'teacher': teacher,
+        'total_students': total_students,
+        'total_subjects': subjects.count(),
+        'total_grades': total_grades,
+        'classes_today': classes_today,
+    }
+    return render(request, 'account/teacher_dashboard.html', context)

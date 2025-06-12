@@ -4,112 +4,395 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Système de Gestion Scolaire{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #f0f2f5;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
         .navbar {
-            background: #2c3e50;
-            padding: 1rem;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 1rem 0;
             color: white;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
         .nav-links {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
         }
+        
         .nav-group {
             display: flex;
-            gap: 1rem;
+            gap: 0.5rem;
+            align-items: center;
         }
+        
         .nav-link {
             color: white;
             text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: background-color 0.3s;
+            padding: 0.7rem 1.2rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
+        
         .nav-link:hover {
-            background-color: #34495e;
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
         }
+        
+        .nav-link i {
+            font-size: 0.9rem;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .logo:hover {
+            color: white;
+            text-decoration: none;
+        }
+        
         .container {
-            max-width: 800px;
-            margin: 80px auto 20px;
+            max-width: 1200px;
+            margin: 100px auto 20px;
+            padding: 0 2rem;
+        }
+        
+        .content-wrapper {
             background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            min-height: calc(100vh - 140px);
         }
+        
         h1, h2 {
-            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 1rem;
         }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            font-weight: 400;
+        }
+        
         .btn {
             display: inline-block;
-            padding: 12px 20px;
-            margin: 5px 0;
-            background-color: #4a90e2;
+            padding: 0.8rem 1.5rem;
+            margin: 0.25rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             text-decoration: none;
             border: none;
-            border-radius: 8px;
+            border-radius: 25px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-align: center;
         }
+        
         .btn:hover {
-            background-color: #357ab7;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+            text-decoration: none;
         }
-        .logout {
-            text-align: right;
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 5px 15px rgba(149, 165, 166, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+        
+        .btn-danger:hover {
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+        }
+        
+        .alert {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border-left: 4px solid;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            border-left-color: #ffc107;
+            color: #856404;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            border-left-color: #17a2b8;
+            color: #0c5460;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
+        }
+        
+        .card-footer {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .badge-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .badge-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .badge-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .nav-group {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .container {
+                margin-top: 120px;
+                padding: 0 1rem;
+            }
+            
+            .content-wrapper {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .table {
+                font-size: 0.9rem;
+            }
+            
+            .table th,
+            .table td {
+                padding: 0.5rem;
+            }
         }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     <nav class="navbar">
-        <div class="nav-links">
-            <div class="nav-group">
-                {% if user.is_authenticated %}
-                    {% if user.role == 'admin' %}
-                        <a href="{% url 'account:dashboard' %}" class="nav-link">Tableau de bord Admin</a>
-                        <a href="{% url 'student:student-list' %}" class="nav-link">Gestion Étudiants</a>
-                        <a href="" class="nav-link">Gestion Enseignants</a>
-                    {% elif user.role == 'teacher' %}
-                        <a href="{% url 'teacher:teacher-dashboard' %}" class="nav-link">Tableau de bord Enseignant</a>
-                        <a href="{% url 'teacher:teacher-subjects' %}" class="nav-link">Mes Matières</a>
-                        <a href="{% url 'teacher:teacher-schedule' %}" class="nav-link">Mon Emploi du temps</a>
-                        <a href="{% url 'teacher-grades' %}" class="nav-link">Gestion des Notes</a>
-                    {% elif user.role == 'student' %}
-                        <a href="{% url 'student:dashboard' %}" class="nav-link">Tableau de bord Étudiant</a>
-                        <a href="{% url 'student:student-grades' %}" class="nav-link">Mes Notes</a>
-                        <a href="{% url 'student:student-schedule' %}" class="nav-link">Mon Emploi du temps</a>
+        <div class="nav-container">
+            <div class="nav-links">
+                <a href="/" class="logo">
+                    <i class="fas fa-graduation-cap"></i> SchoolApp
+                </a>
+                
+                <div class="nav-group">
+                    {% if user.is_authenticated %}
+                        {% if user.role == 'admin' %}
+                            <a href="{% url 'account:dashboard' %}" class="nav-link">
+                                <i class="fas fa-tachometer-alt"></i> Tableau de bord
+                            </a>
+                            <a href="{% url 'student:student-list' %}" class="nav-link">
+                                <i class="fas fa-user-graduate"></i> Étudiants
+                            </a>
+                            <a href="#" class="nav-link">
+                                <i class="fas fa-chalkboard-teacher"></i> Enseignants
+                            </a>
+                        {% elif user.role == 'teacher' %}
+                            <a href="{% url 'teacher:dashboard' %}" class="nav-link">
+                                <i class="fas fa-tachometer-alt"></i> Tableau de bord
+                            </a>
+                            <a href="{% url 'teacher:subjects' %}" class="nav-link">
+                                <i class="fas fa-book"></i> Mes Matières
+                            </a>
+                            <a href="{% url 'teacher:schedule' %}" class="nav-link">
+                                <i class="fas fa-calendar-alt"></i> Emploi du temps
+                            </a>
+                            <a href="{% url 'teacher:grades' %}" class="nav-link">
+                                <i class="fas fa-star"></i> Notes
+                            </a>
+                        {% elif user.role == 'student' %}
+                            <a href="{% url 'student:dashboard' %}" class="nav-link">
+                                <i class="fas fa-tachometer-alt"></i> Tableau de bord
+                            </a>
+                            <a href="{% url 'student:student-grades' %}" class="nav-link">
+                                <i class="fas fa-chart-line"></i> Mes Notes
+                            </a>
+                            <a href="{% url 'student:student-schedule' %}" class="nav-link">
+                                <i class="fas fa-calendar"></i> Emploi du temps
+                            </a>
+                        {% endif %}
+                        
+                        <a href="{% url 'account:profile' %}" class="nav-link">
+                            <i class="fas fa-user"></i> Profil
+                        </a>
+                        <a href="{% url 'account:logout' %}" class="nav-link">
+                            <i class="fas fa-sign-out-alt"></i> Déconnexion
+                        </a>
+                    {% else %}
+                        <a href="{% url 'account:login' %}" class="nav-link">
+                            <i class="fas fa-sign-in-alt"></i> Connexion
+                        </a>
+                        <a href="{% url 'account:register' %}" class="nav-link">
+                            <i class="fas fa-user-plus"></i> Inscription
+                        </a>
                     {% endif %}
-                {% endif %}
-            </div>
-            <div class="nav-group">
-                {% if user.is_authenticated %}
-                    <a href="{% url 'account:profile' %}" class="nav-link">Mon Profil</a>
-                    <a href="{% url 'account:logout' %}" class="nav-link">Déconnexion</a>
-                {% else %}
-                    <a href="{% url 'account:login' %}" class="nav-link">Connexion</a>
-                    <a href="{% url 'account:register' %}" class="nav-link">Inscription</a>
-                {% endif %}
+                </div>
             </div>
         </div>
     </nav>
+    
     <div class="container">
-        {% block content %}
-        <!-- Contenu des pages -->
-        {% endblock %}
+        <div class="content-wrapper">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        <i class="fas fa-info-circle"></i> {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% block content %}
+            <!-- Contenu des pages -->
+            {% endblock %}
+        </div>
     </div>
 </body>
 </html>

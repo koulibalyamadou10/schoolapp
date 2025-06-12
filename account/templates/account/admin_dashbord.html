@@ -2,17 +2,372 @@
 
 {% block title %}Admin - Tableau de bord{% endblock %}
 
+{% block extra_css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+    .dashboard-container {
+        padding: 2rem 0;
+    }
+    
+    .welcome-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .welcome-header h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 300;
+    }
+    
+    .welcome-header p {
+        margin: 0.5rem 0 0 0;
+        opacity: 0.9;
+        font-size: 1.1rem;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        border-left: 4px solid;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    
+    .stat-card.students { border-left-color: #4CAF50; }
+    .stat-card.teachers { border-left-color: #2196F3; }
+    .stat-card.subjects { border-left-color: #FF9800; }
+    .stat-card.grades { border-left-color: #9C27B0; }
+    
+    .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        opacity: 0.8;
+    }
+    
+    .stat-card.students .stat-icon { color: #4CAF50; }
+    .stat-card.teachers .stat-icon { color: #2196F3; }
+    .stat-card.subjects .stat-icon { color: #FF9800; }
+    .stat-card.grades .stat-icon { color: #9C27B0; }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0;
+        color: #2c3e50;
+    }
+    
+    .stat-label {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .action-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    
+    .action-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #667eea;
+    }
+    
+    .action-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #2c3e50;
+    }
+    
+    .action-description {
+        color: #7f8c8d;
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+    }
+    
+    .action-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.8rem 2rem;
+        border: none;
+        border-radius: 25px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .recent-activity {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .activity-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .activity-header i {
+        font-size: 1.5rem;
+        color: #667eea;
+        margin-right: 0.5rem;
+    }
+    
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #ecf0f1;
+    }
+    
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+    
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1rem;
+    }
+    
+    .activity-icon.new-student {
+        background: rgba(76, 175, 80, 0.1);
+        color: #4CAF50;
+    }
+    
+    .activity-icon.new-grade {
+        background: rgba(156, 39, 176, 0.1);
+        color: #9C27B0;
+    }
+    
+    .activity-text {
+        flex: 1;
+    }
+    
+    .activity-time {
+        color: #95a5a6;
+        font-size: 0.85rem;
+    }
+    
+    .logout-section {
+        text-align: right;
+        margin-bottom: 1rem;
+    }
+    
+    .logout-btn {
+        background: #e74c3c;
+        color: white;
+        padding: 0.6rem 1.5rem;
+        border: none;
+        border-radius: 20px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .logout-btn:hover {
+        background: #c0392b;
+        color: white;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-    <div class="logout">
-        <a href="{% url 'account:logout' %}" class="btn">Se déconnecter</a>
+<div class="dashboard-container">
+    <div class="logout-section">
+        <a href="{% url 'account:logout' %}" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Se déconnecter
+        </a>
     </div>
-    <h1>Bonjour {{ request.user.full_name }}</h1>
-    <h2>Tableau de bord Administrateur</h2>
-    <ul>
-        <li><a href="#" class="btn">Gérer les utilisateurs</a></li>
-        <li><a href="{% url 'student:student-list' %}" class="btn">Gérer les étudiants</a></li>
-        <li><a href="#" class="btn">Gérer les enseignants</a></li>
-        <li><a href="#" class="btn">Gérer les matières</a></li>
-        <li><a href="#" class="btn">Voir les statistiques</a></li>
-    </ul>
+
+    <div class="welcome-header">
+        <h1><i class="fas fa-user-shield"></i> Bonjour {{ request.user.full_name }}</h1>
+        <p>Tableau de bord Administrateur - Gérez votre établissement scolaire</p>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="stats-grid">
+        <div class="stat-card students">
+            <div class="stat-icon">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <h3 class="stat-number">{{ total_students|default:0 }}</h3>
+            <p class="stat-label">Étudiants</p>
+        </div>
+        
+        <div class="stat-card teachers">
+            <div class="stat-icon">
+                <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <h3 class="stat-number">{{ total_teachers|default:0 }}</h3>
+            <p class="stat-label">Enseignants</p>
+        </div>
+        
+        <div class="stat-card subjects">
+            <div class="stat-icon">
+                <i class="fas fa-book"></i>
+            </div>
+            <h3 class="stat-number">{{ total_subjects|default:0 }}</h3>
+            <p class="stat-label">Matières</p>
+        </div>
+        
+        <div class="stat-card grades">
+            <div class="stat-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h3 class="stat-number">{{ total_grades|default:0 }}</h3>
+            <p class="stat-label">Notes</p>
+        </div>
+    </div>
+
+    <!-- Actions principales -->
+    <div class="actions-grid">
+        <div class="action-card">
+            <div class="action-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3 class="action-title">Gérer les utilisateurs</h3>
+            <p class="action-description">Créer, modifier et supprimer les comptes utilisateurs</p>
+            <a href="#" class="action-btn">Accéder</a>
+        </div>
+
+        <div class="action-card">
+            <div class="action-icon">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <h3 class="action-title">Gérer les étudiants</h3>
+            <p class="action-description">Administration complète des dossiers étudiants</p>
+            <a href="{% url 'student:student-list' %}" class="action-btn">Accéder</a>
+        </div>
+
+        <div class="action-card">
+            <div class="action-icon">
+                <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <h3 class="action-title">Gérer les enseignants</h3>
+            <p class="action-description">Gestion des profils et affectations des enseignants</p>
+            <a href="#" class="action-btn">Accéder</a>
+        </div>
+
+        <div class="action-card">
+            <div class="action-icon">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <h3 class="action-title">Gérer les matières</h3>
+            <p class="action-description">Configuration des matières et programmes</p>
+            <a href="#" class="action-btn">Accéder</a>
+        </div>
+
+        <div class="action-card">
+            <div class="action-icon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <h3 class="action-title">Statistiques</h3>
+            <p class="action-description">Rapports et analyses de performance</p>
+            <a href="#" class="action-btn">Accéder</a>
+        </div>
+
+        <div class="action-card">
+            <div class="action-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h3 class="action-title">Emplois du temps</h3>
+            <p class="action-description">Planification et gestion des horaires</p>
+            <a href="#" class="action-btn">Accéder</a>
+        </div>
+    </div>
+
+    <!-- Activité récente -->
+    <div class="recent-activity">
+        <div class="activity-header">
+            <i class="fas fa-clock"></i>
+            <h3>Activité récente</h3>
+        </div>
+        
+        <div class="activity-item">
+            <div class="activity-icon new-student">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <div class="activity-text">
+                <strong>Nouvel étudiant inscrit</strong><br>
+                <small>Marie Dupont a été ajoutée en 3ème A</small>
+            </div>
+            <div class="activity-time">Il y a 2h</div>
+        </div>
+        
+        <div class="activity-item">
+            <div class="activity-icon new-grade">
+                <i class="fas fa-star"></i>
+            </div>
+            <div class="activity-text">
+                <strong>Notes saisies</strong><br>
+                <small>15 nouvelles notes en Mathématiques</small>
+            </div>
+            <div class="activity-time">Il y a 4h</div>
+        </div>
+        
+        <div class="activity-item">
+            <div class="activity-icon new-student">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <div class="activity-text">
+                <strong>Profil enseignant mis à jour</strong><br>
+                <small>Prof. Martin a modifié ses informations</small>
+            </div>
+            <div class="activity-time">Hier</div>
+        </div>
+    </div>
+</div>
 {% endblock %}

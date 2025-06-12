@@ -1,15 +1,420 @@
 {% extends '../base.html' %}
 
-{% block title%} Enseignant - Tableau de bord{% endblock %}
+{% block title %}Enseignant - Tableau de bord{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<style>
+    .teacher-dashboard {
+        padding: 2rem 0;
+    }
+    
+    .welcome-section {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .welcome-section h1 {
+        margin: 0;
+        font-size: 2.5rem;
+        font-weight: 300;
+    }
+    
+    .welcome-section p {
+        margin: 0.5rem 0 0 0;
+        opacity: 0.9;
+        font-size: 1.1rem;
+    }
+    
+    .quick-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #4facfe;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #2c3e50;
+        margin: 0;
+    }
+    
+    .stat-label {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        margin: 0.5rem 0 0 0;
+    }
+    
+    .main-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+    
+    .content-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .card-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #ecf0f1;
+    }
+    
+    .card-header i {
+        font-size: 1.5rem;
+        color: #4facfe;
+        margin-right: 0.5rem;
+    }
+    
+    .card-header h3 {
+        margin: 0;
+        color: #2c3e50;
+    }
+    
+    .schedule-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #4facfe;
+    }
+    
+    .schedule-time {
+        font-weight: bold;
+        color: #2c3e50;
+        min-width: 80px;
+    }
+    
+    .schedule-details {
+        flex: 1;
+        margin-left: 1rem;
+    }
+    
+    .schedule-subject {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .schedule-class {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+    
+    .recent-grades {
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    .grade-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.8rem;
+        margin-bottom: 0.5rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+    
+    .grade-student {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .grade-subject {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+    
+    .grade-value {
+        background: #4facfe;
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 15px;
+        font-weight: bold;
+    }
+    
+    .actions-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .action-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        text-align: center;
+        transition: all 0.3s ease;
+        border-top: 4px solid transparent;
+    }
+    
+    .action-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    
+    .action-card.grades { border-top-color: #e74c3c; }
+    .action-card.classes { border-top-color: #f39c12; }
+    .action-card.schedule { border-top-color: #27ae60; }
+    .action-card.attendance { border-top-color: #9b59b6; }
+    
+    .action-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    
+    .action-card.grades .action-icon { color: #e74c3c; }
+    .action-card.classes .action-icon { color: #f39c12; }
+    .action-card.schedule .action-icon { color: #27ae60; }
+    .action-card.attendance .action-icon { color: #9b59b6; }
+    
+    .action-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #2c3e50;
+    }
+    
+    .action-btn {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        padding: 0.8rem 2rem;
+        border: none;
+        border-radius: 25px;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+    
+    .logout-section {
+        text-align: right;
+        margin-bottom: 1rem;
+    }
+    
+    .logout-btn {
+        background: #e74c3c;
+        color: white;
+        padding: 0.6rem 1.5rem;
+        border: none;
+        border-radius: 20px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+    
+    .logout-btn:hover {
+        background: #c0392b;
+        color: white;
+        text-decoration: none;
+    }
+    
+    @media (max-width: 768px) {
+        .main-content {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-
-    <div class="logout">
-        <a href="{% url 'logout' %}" class="btn">Se déconnecter</a>
+<div class="teacher-dashboard">
+    <div class="logout-section">
+        <a href="{% url 'account:logout' %}" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Se déconnecter
+        </a>
     </div>
-    <h1>Bienvenue {{ request.user.full_name }}</h1>
-    <h2>Espace Enseignant</h2>
-    <a href="#" class="btn">Saisir les notes</a>
-    <a href="#" class="btn">Voir mes classes</a>
 
+    <div class="welcome-section">
+        <h1><i class="fas fa-chalkboard-teacher"></i> Bienvenue {{ request.user.full_name }}</h1>
+        <p>Espace Enseignant - Gérez vos cours et suivez vos étudiants</p>
+    </div>
+
+    <!-- Statistiques rapides -->
+    <div class="quick-stats">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3 class="stat-number">{{ total_students|default:0 }}</h3>
+            <p class="stat-label">Étudiants</p>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-book"></i>
+            </div>
+            <h3 class="stat-number">{{ total_subjects|default:0 }}</h3>
+            <p class="stat-label">Matières</p>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <h3 class="stat-number">{{ total_grades|default:0 }}</h3>
+            <p class="stat-label">Notes saisies</p>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <h3 class="stat-number">{{ classes_today|default:0 }}</h3>
+            <p class="stat-label">Cours aujourd'hui</p>
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="main-content">
+        <!-- Emploi du temps du jour -->
+        <div class="content-card">
+            <div class="card-header">
+                <i class="fas fa-clock"></i>
+                <h3>Emploi du temps d'aujourd'hui</h3>
+            </div>
+            
+            <div class="schedule-item">
+                <div class="schedule-time">08:00</div>
+                <div class="schedule-details">
+                    <div class="schedule-subject">Mathématiques</div>
+                    <div class="schedule-class">3ème A - Salle 101</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <div class="schedule-time">10:00</div>
+                <div class="schedule-details">
+                    <div class="schedule-subject">Mathématiques</div>
+                    <div class="schedule-class">2ème B - Salle 102</div>
+                </div>
+            </div>
+            
+            <div class="schedule-item">
+                <div class="schedule-time">14:00</div>
+                <div class="schedule-details">
+                    <div class="schedule-subject">Algèbre</div>
+                    <div class="schedule-class">1ère S - Salle 103</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notes récentes -->
+        <div class="content-card">
+            <div class="card-header">
+                <i class="fas fa-chart-line"></i>
+                <h3>Notes récemment saisies</h3>
+            </div>
+            
+            <div class="recent-grades">
+                <div class="grade-item">
+                    <div>
+                        <div class="grade-student">Marie Dupont</div>
+                        <div class="grade-subject">Mathématiques</div>
+                    </div>
+                    <div class="grade-value">16/20</div>
+                </div>
+                
+                <div class="grade-item">
+                    <div>
+                        <div class="grade-student">Pierre Martin</div>
+                        <div class="grade-subject">Algèbre</div>
+                    </div>
+                    <div class="grade-value">14/20</div>
+                </div>
+                
+                <div class="grade-item">
+                    <div>
+                        <div class="grade-student">Sophie Leroy</div>
+                        <div class="grade-subject">Mathématiques</div>
+                    </div>
+                    <div class="grade-value">18/20</div>
+                </div>
+                
+                <div class="grade-item">
+                    <div>
+                        <div class="grade-student">Thomas Dubois</div>
+                        <div class="grade-subject">Algèbre</div>
+                    </div>
+                    <div class="grade-value">12/20</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions principales -->
+    <div class="actions-section">
+        <div class="action-card grades">
+            <div class="action-icon">
+                <i class="fas fa-edit"></i>
+            </div>
+            <h3 class="action-title">Saisir les notes</h3>
+            <a href="{% url 'teacher:grades' %}" class="action-btn">Accéder</a>
+        </div>
+
+        <div class="action-card classes">
+            <div class="action-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3 class="action-title">Voir mes classes</h3>
+            <a href="{% url 'teacher:subjects' %}" class="action-btn">Accéder</a>
+        </div>
+
+        <div class="action-card schedule">
+            <div class="action-icon">
+                <i class="fas fa-calendar-alt"></i>
+            </div>
+            <h3 class="action-title">Mon emploi du temps</h3>
+            <a href="{% url 'teacher:schedule' %}" class="action-btn">Accéder</a>
+        </div>
+
+        <div class="action-card attendance">
+            <div class="action-icon">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <h3 class="action-title">Suivi des présences</h3>
+            <a href="{% url 'teacher:attendance' %}" class="action-btn">Accéder</a>
+        </div>
+    </div>
+</div>
 {% endblock %}

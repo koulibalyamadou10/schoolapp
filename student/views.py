@@ -160,5 +160,4 @@ def student_dashboard(request):
         'student': student,
         'academic_records': academic_records,
     }
-    return render(request, 'student/dashboard.html', context)
-
+    return render(request, 'account/student_dashboard.html', context)

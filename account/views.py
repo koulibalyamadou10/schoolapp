@@ -130,6 +130,16 @@ def password_reset_confirm_view(request, uidb64, token):
 @login_required
 @role_required(['admin'])
 def admin_dashboard(request):
-    return render(request, 'account/admin_dashbord.html')
-
+    # Récupération des statistiques pour l'admin
+    from student.models import Student
+    from teacher.models import Teacher
+    from subject.models import Subject
+    from grade.models import Grade
     
+    context = {
+        'total_students': Student.objects.count(),
+        'total_teachers': Teacher.objects.count(),
+        'total_subjects': Subject.objects.count(),
+        'total_grades': Grade.objects.count(),
+    }
+    return render(request, 'account/admin_dashbord.html', context)
