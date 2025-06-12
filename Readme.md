@@ -74,15 +74,32 @@ Ce projet est un système de gestion scolaire développé avec Django et MySQL, 
 ## 🌐 URLs du projet
 Après avoir lancé le serveur, vous pouvez accéder aux différentes interfaces :
 
-Connexion : http://127.0.0.1:8000/account/login/
+### URLs de Compte (account/)
+- Connexion : http://127.0.0.1:8000/account/login/
+- Inscription : http://127.0.0.1:8000/account/register/
+- Déconnexion : http://127.0.0.1:8000/account/logout/
+- Profil : http://127.0.0.1:8000/account/profile/
+- Changement de mot de passe : http://127.0.0.1:8000/account/profile/change-password/
+- Réinitialisation de mot de passe : http://127.0.0.1:8000/account/password-reset/
+- Tableaux de bord :
+  - Admin : http://127.0.0.1:8000/account/admin-dashboard/
+  - Enseignant : http://127.0.0.1:8000/account/teacher-dashboard/
+  - Étudiant : http://127.0.0.1:8000/account/student-dashboard/
 
-Inscription : http://127.0.0.1:8000/account/register/
+### URLs Enseignant (teacher/)
+- Profil : http://127.0.0.1:8000/teacher/profile/
+- Matières : http://127.0.0.1:8000/teacher/subjects/
+- Emploi du temps : http://127.0.0.1:8000/teacher/schedule/
+- Gestion des notes : http://127.0.0.1:8000/teacher/grades/
+- Suivi de l'assiduité : http://127.0.0.1:8000/teacher/attendance/
 
-Tableau de bord Admin : http://127.0.0.1:8000/account/admin-dashboard/
-
-Tableau de bord Enseignant : http://127.0.0.1:8000/account/teacher-dashboard/
-
-Tableau de bord Étudiant : http://127.0.0.1:8000/account/student-dashboard/
+### URLs Étudiant (student/)
+- Liste des étudiants : http://127.0.0.1:8000/student/list/
+- Création d'étudiant : http://127.0.0.1:8000/student/create/
+- Détails étudiant : http://127.0.0.1:8000/student/<id>/
+- Modification étudiant : http://127.0.0.1:8000/student/<id>/update/
+- Dossier académique : http://127.0.0.1:8000/student/<id>/academic-record/
+- Tableau de bord étudiant : http://127.0.0.1:8000/student/dashboard/
 
 ## 🔐 Système de Permissions
 Le projet utilise des décorateurs personnalisés pour gérer efficacement les accès :
