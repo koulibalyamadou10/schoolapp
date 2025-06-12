@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Matières{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Mes Matières</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="subjects-list">
+        {% if subjects %}
+            {% for subject in subjects %}
+                <div class="subject-card">
+                    <h3>{{ subject.name }}</h3>
+                    <div class="subject-actions">
+                        <a href="{% url 'teacher:grades' %}?subject={{ subject.id }}" class="btn">Gérer les notes</a>
+                        <a href="{% url 'teacher:attendance' %}?subject={{ subject.id }}" class="btn">Suivi des présences</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-subjects">Aucune matière n'est actuellement assignée à votre profil.</p>
+        {% endif %}
+    </div>
+
+    <div class="navigation">
+        <a href="{% url 'teacher:profile' %}" class="btn secondary">Retour au profil</a>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .subjects-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+    }
+    .subject-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .subject-card h3 {
+        margin: 0 0 15px 0;
+        color: #2c3e50;
+    }
+    .subject-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .no-subjects {
+        text-align: center;
+        color: #6c757d;
+        font-style: italic;
+        grid-column: 1 / -1;
+        padding: 20px;
+    }
+    .navigation {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .btn.secondary {
+        background-color: #6c757d;
+    }
+    .btn.secondary:hover {
+        background-color: #5a6268;
+    }
+</style>
+{% endblock %}

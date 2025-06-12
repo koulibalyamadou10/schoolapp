@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}Suivi des Présences{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Suivi des Présences</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="attendance-container">
+        <div class="today-info">
+            <h2>Aujourd'hui - {{ today|date:"l d F Y" }}</h2>
+            {% if schedules %}
+                <div class="schedules-list">
+                    {% for schedule in schedules %}
+                        <div class="schedule-card">
+                            <h3>{{ schedule.subject.name }}</h3>
+                            <p>{{ schedule.start_time|time:"H:i" }} - {{ schedule.end_time|time:"H:i" }}</p>
+                            <p>Salle: {{ schedule.classroom }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="no-schedule">Aucun cours prévu aujourd'hui</p>
+            {% endif %}
+        </div>
+
+        <div class="attendance-form-container">
+            <h2>Enregistrer une présence</h2>
+            <form method="POST" class="attendance-form">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                                <div class="error-message">{{ error }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn">Enregistrer</button>
+            </form>
+        </div>
+
+        <div class="attendance-list">
+            <h2>Présences enregistrées aujourd'hui</h2>
+            <div class="table-responsive">
+                <table class="attendance-table">
+                    <thead>
+                        <tr>
+                            <th>Horaire</th>
+                            <th>Étudiant</th>
+                            <th>Matière</th>
+                            <th>Statut</th>
+                            <th>Retard</th>
+                            <th>Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for attendance in attendances %}
+                            <tr class="status-{{ attendance.status }}">
+                                <td>{{ attendance.schedule.start_time|time:"H:i" }}</td>
+                                <td>{{ attendance.student.user.first_name }} {{ attendance.student.user.last_name }}</td>
+                                <td>{{ attendance.schedule.subject.name }}</td>
+                                <td>{{ attendance.get_status_display }}</td>
+                                <td>{% if attendance.minutes_late %}{{ attendance.minutes_late }} min{% else %}-{% endif %}</td>
+                                <td>{{ attendance.note|default:"-" }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="no-data">Aucune présence enregistrée aujourd'hui</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <a href="{% url 'teacher:profile' %}" class="btn secondary">Retour au profil</a>
+    </div>
+</div>
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .attendance-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 30px;
+        margin: 20px 0;
+    }
+    .today-info {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .schedules-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+    }
+    .schedule-card {
+        background: white;
+        padding: 15px;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .schedule-card h3 {
+        margin: 0 0 10px 0;
+        color: #2c3e50;
+    }
+    .attendance-form-container {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .attendance-form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    .attendance-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    .attendance-table th,
+    .attendance-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    .attendance-table th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+    }
+    .status-present { background-color: #d4edda; }
+    .status-absent { background-color: #f8d7da; }
+    .status-late { background-color: #fff3cd; }
+    .status-excused { background-color: #e2e3e5; }
+    .no-data {
+        text-align: center;
+        color: #6c757d;
+        font-style: italic;
+    }
+    .no-schedule {
+        text-align: center;
+        color: #6c757d;
+        font-style: italic;
+        margin: 20px 0;
+    }
+    .navigation {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .btn.secondary {
+        background-color: #6c757d;
+    }
+    .btn.secondary:hover {
+        background-color: #5a6268;
+    }
+</style>
+{% endblock %}
