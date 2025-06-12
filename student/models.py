@@ -11,6 +11,23 @@ class Student(models.Model):
         ('F', 'Féminin'),
     ]
 
+    STUDENT_CLASS_CHOICES = [
+        ('6A', '6ème A'),
+        ('6B', '6ème B'),
+        ('5A', '5ème A'), 
+        ('5B', '5ème B'),
+        ('4A', '4ème A'),
+        ('4B', '4ème B'),
+        ('3A', '3ème A'),
+        ('3B', '3ème B'),
+        ('2A', '2nde A'),
+        ('2B', '2nde B'),
+        ('1A', '1ère A'),
+        ('1B', '1ère B'),
+        ('TA', 'Terminale A'),
+        ('TB', 'Terminale B'),
+    ]
+
     # Informations de base
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=100, verbose_name='Prénom')
@@ -19,7 +36,8 @@ class Student(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, verbose_name='Genre', default='M')
     
     # Informations académiques
-    student_class = models.CharField(max_length=100, verbose_name='Classe')  # ex: "3ème A"
+    student_class = models.CharField(max_length=100, verbose_name='Classe', choices=STUDENT_CLASS_CHOICES, default='6A') 
+
     registration_date = models.DateField(auto_now_add=True, verbose_name='Date d\'inscription')
     student_id = models.CharField(max_length=20, unique=True, verbose_name='Numéro d\'étudiant')
     

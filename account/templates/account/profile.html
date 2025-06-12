@@ -61,7 +61,7 @@
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="{{ user.email }}" required>
+                <input type="email" id="email" name="email" disabled value="{{ user.email }}" required>
             </div>
             <div class="form-group">
                 <label for="username">Nom d'utilisateur</label>
@@ -70,9 +70,10 @@
             <button type="submit" class="btn">Mettre à jour le profil</button>
         </form>
 
-        <div style="margin-top: 20px;">
-            <a href="{% url 'change_password' %}" class="btn">Changer le mot de passe</a>
-            <a href="{% url 'dashboard' %}" class="btn" style="background-color: #6c757d;">Retour au tableau de bord</a>
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <a href="{% url 'account:change_password' %}" class="btn" style="flex: 1; text-align: center;">Changer le mot de passe</a>
+            <a href="{% url 'account:dashboard' %}" class="btn" style="background-color: #6c757d; flex: 1; text-align: center;">Retour au tableau de bord</a>
         </div>
+        
     </div>
 {% endblock %}
