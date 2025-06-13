@@ -6,7 +6,7 @@ app_name = 'teacher'
 
 urlpatterns = [
     # admin de teacher
-    path('teacher-dashboard/', views.teacher_dashboard, name='dashboard'),
+    path('dashboard/', views.teacher_dashboard, name='dashboard'),
 
     # Gestion du profil enseignant
     path('profile/', views.teacher_profile, name='profile'),
