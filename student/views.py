@@ -127,10 +127,14 @@ def student_grades(request):
     student = get_object_or_404(Student, user=request.user)
     # Récupérer tous les dossiers académiques de l'étudiant
     academic_records = student.academic_records.all().order_by('-academic_year', '-semester')
+    # Récupérer toutes les notes individuelles de l'étudiant
+    from grade.models import Grade
+    grades = Grade.objects.filter(student=student).select_related('subject').order_by('-date')
     
     context = {
         'student': student,
         'academic_records': academic_records,
+        'grades': grades,
     }
     return render(request, 'student/student_grades.html', context)
 

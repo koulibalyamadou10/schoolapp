@@ -8,7 +8,7 @@ urlpatterns = [
     # Gestion des étudiants
     path('list/', views.student_list, name='student-list'),
     path('create/', views.student_create, name='student-create'),
-    path('<int:pk>/', views.student_detail, name='student-detail'),
+    path('<int:pk>/detail/', views.student_detail, name='student-detail'),
     path('<int:pk>/update/', views.student_update, name='student-update'),
     
     # Gestion des dossiers académiques
