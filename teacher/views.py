@@ -92,6 +92,8 @@ def manage_grades(request):
     
     grades = Grade.objects.filter(subject__in=subjects).order_by('-date')
     students = Student.objects.all()
+
+    print(f"Grades: {grades}, Students: {students}")
     
     return render(request, 'teacher/grades.html', {
         'subjects': subjects,
