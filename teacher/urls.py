@@ -5,6 +5,10 @@ from . import views
 app_name = 'teacher'
 
 urlpatterns = [
+    # Gestion des enseignants (admin)
+    path('', views.teacher_list, name='teacher_list'),
+    path('<int:teacher_id>/assign-subjects/', views.assign_subjects, name='assign_subjects'),
+
     # admin de teacher
     path('dashboard/', views.teacher_dashboard, name='dashboard'),
 

@@ -8,6 +8,95 @@
     .dashboard-container {
         padding: 2rem 0;
     }
+
+    /* Styles pour les statistiques détaillées */
+    .detailed-stats {
+        margin: 2rem 0;
+    }
+
+    .stat-detail-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        margin-bottom: 1.5rem;
+        height: 100%;
+    }
+
+    .stat-detail-card h4 {
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .stat-detail-card h4 i {
+        margin-right: 0.5rem;
+        color: #667eea;
+    }
+
+    .class-distribution .class-item,
+    .class-averages .average-item,
+    .top-subjects .subject-item,
+    .academic-status .status-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #ecf0f1;
+    }
+
+    .class-item:last-child,
+    .average-item:last-child,
+    .subject-item:last-child,
+    .status-item:last-child {
+        border-bottom: none;
+    }
+
+    .class-name, .subject-name, .status-name {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .class-count, .average-score, .subject-avg, .status-count {
+        color: #667eea;
+        font-weight: 600;
+    }
+
+    .attendance-rate {
+        text-align: center;
+        padding: 1rem 0;
+    }
+
+    .rate-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    .rate-number {
+        color: white;
+        font-size: 1.8rem;
+        font-weight: bold;
+    }
+
+    .no-data {
+        color: #95a5a6;
+        text-align: center;
+        padding: 1rem;
+        font-style: italic;
+    }
+
+    /* Styles pour les activités récentes */
+    .activity-icon.absence {
+        background: rgba(231, 76, 60, 0.1);
+        color: #e74c3c;
+    }
     
     .welcome-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -237,7 +326,7 @@
         <p>Tableau de bord Administrateur - Gérez votre établissement scolaire</p>
     </div>
 
-    <!-- Statistiques -->
+    <!-- Statistiques principales -->
     <div class="stats-grid">
         <div class="stat-card students">
             <div class="stat-icon">
@@ -272,6 +361,93 @@
         </div>
     </div>
 
+    <!-- Statistiques détaillées -->
+    <div class="detailed-stats">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="stat-detail-card">
+                    <h4><i class="fas fa-users"></i> Répartition par classe</h4>
+                    <div class="class-distribution">
+                        {% for class_data in students_by_class %}
+                        <div class="class-item">
+                            <span class="class-name">{{ class_data.student_class }}</span>
+                            <span class="class-count">{{ class_data.count }} étudiants</span>
+                        </div>
+                        {% empty %}
+                        <p class="no-data">Aucune donnée disponible</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="stat-detail-card">
+                    <h4><i class="fas fa-chart-bar"></i> Moyennes par classe</h4>
+                    <div class="class-averages">
+                        {% for avg_data in class_averages %}
+                        <div class="average-item">
+                            <span class="class-name">{{ avg_data.student__student_class }}</span>
+                            <span class="average-score">{{ avg_data.avg_grade|floatformat:2 }}/20</span>
+                        </div>
+                        {% empty %}
+                        <p class="no-data">Aucune donnée disponible</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <div class="stat-detail-card">
+                    <h4><i class="fas fa-calendar-check"></i> Taux de présence</h4>
+                    <div class="attendance-rate">
+                        <div class="rate-circle">
+                            <span class="rate-number">{{ attendance_rate|floatformat:1 }}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="stat-detail-card">
+                    <h4><i class="fas fa-trophy"></i> Top matières</h4>
+                    <div class="top-subjects">
+                        {% for subject in top_subjects %}
+                        <div class="subject-item">
+                            <span class="subject-name">{{ subject.subject__name }}</span>
+                            <span class="subject-avg">{{ subject.avg_grade|floatformat:2 }}/20</span>
+                        </div>
+                        {% empty %}
+                        <p class="no-data">Aucune donnée disponible</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="stat-detail-card">
+                    <h4><i class="fas fa-user-check"></i> Statuts académiques</h4>
+                    <div class="academic-status">
+                        {% for status in academic_status %}
+                        <div class="status-item">
+                            <span class="status-name">
+                                {% if status.academic_status == 'REGULAR' %}Régulier
+                                {% elif status.academic_status == 'PROBATION' %}Probation
+                                {% elif status.academic_status == 'SUSPENDED' %}Suspendu
+                                {% endif %}
+                            </span>
+                            <span class="status-count">{{ status.count }}</span>
+                        </div>
+                        {% empty %}
+                        <p class="no-data">Aucune donnée disponible</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Actions principales -->
     <div class="actions-grid">
         <div class="action-card">
@@ -280,7 +456,7 @@
             </div>
             <h3 class="action-title">Gérer les utilisateurs</h3>
             <p class="action-description">Créer, modifier et supprimer les comptes utilisateurs</p>
-            <a href="#" class="action-btn">Accéder</a>
+            <a href="" class="action-btn">Accéder</a>
         </div>
 
         <div class="action-card">
@@ -298,7 +474,7 @@
             </div>
             <h3 class="action-title">Gérer les enseignants</h3>
             <p class="action-description">Gestion des profils et affectations des enseignants</p>
-            <a href="#" class="action-btn">Accéder</a>
+            <a href="{% url 'teacher:teacher_list' %}" class="action-btn">Accéder</a>
         </div>
 
         <div class="action-card">
@@ -307,7 +483,7 @@
             </div>
             <h3 class="action-title">Gérer les matières</h3>
             <p class="action-description">Configuration des matières et programmes</p>
-            <a href="#" class="action-btn">Accéder</a>
+            <a href="{% url 'subject:subject_list' %}" class="action-btn">Accéder</a>
         </div>
 
         <div class="action-card">
@@ -336,38 +512,22 @@
             <h3>Activité récente</h3>
         </div>
         
+        {% for activity in recent_activities %}
         <div class="activity-item">
-            <div class="activity-icon new-student">
-                <i class="fas fa-user-plus"></i>
+            <div class="activity-icon {{ activity.icon_class }}">
+                <i class="{{ activity.icon }}"></i>
             </div>
             <div class="activity-text">
-                <strong>Nouvel étudiant inscrit</strong><br>
-                <small>Marie Dupont a été ajoutée en 3ème A</small>
+                <strong>{{ activity.text }}</strong><br>
+                <small>{{ activity.description }}</small>
             </div>
-            <div class="activity-time">Il y a 2h</div>
+            <div class="activity-time">
+                {{ activity.date|date:"d/m/Y" }}
+            </div>
         </div>
-        
-        <div class="activity-item">
-            <div class="activity-icon new-grade">
-                <i class="fas fa-star"></i>
-            </div>
-            <div class="activity-text">
-                <strong>Notes saisies</strong><br>
-                <small>15 nouvelles notes en Mathématiques</small>
-            </div>
-            <div class="activity-time">Il y a 4h</div>
-        </div>
-        
-        <div class="activity-item">
-            <div class="activity-icon new-student">
-                <i class="fas fa-user-check"></i>
-            </div>
-            <div class="activity-text">
-                <strong>Profil enseignant mis à jour</strong><br>
-                <small>Prof. Martin a modifié ses informations</small>
-            </div>
-            <div class="activity-time">Hier</div>
-        </div>
+        {% empty %}
+        <p class="no-data">Aucune activité récente</p>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

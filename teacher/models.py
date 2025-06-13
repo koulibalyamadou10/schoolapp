@@ -26,12 +26,29 @@ class Schedule(models.Model):
         (6, 'Samedi'),
     ]
 
+    STUDENT_CLASS_CHOICES = [
+        ('6A', '6ème A'),
+        ('6B', '6ème B'),
+        ('5A', '5ème A'), 
+        ('5B', '5ème B'),
+        ('4A', '4ème A'),
+        ('4B', '4ème B'),
+        ('3A', '3ème A'),
+        ('3B', '3ème B'),
+        ('2A', '2nde A'),
+        ('2B', '2nde B'),
+        ('1A', '1ère A'),
+        ('1B', '1ère B'),
+        ('TA', 'Terminale A'),
+        ('TB', 'Terminale B'),
+    ]
+
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='schedules')
     subject = models.ForeignKey('subject.Subject', on_delete=models.CASCADE)
     day_of_week = models.IntegerField(choices=DAYS_OF_WEEK)
     start_time = models.TimeField()
     end_time = models.TimeField()
-    classroom = models.CharField(max_length=50)
+    classroom = models.CharField(max_length=50, default='6A', choices=STUDENT_CLASS_CHOICES)
 
     class Meta:
         ordering = ['day_of_week', 'start_time']

@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import Student, AcademicRecord
-from .forms import StudentRegistrationForm, StudentUpdateForm, AcademicRecordForm
+from .forms import StudentCreationForm, StudentRegistrationForm, StudentUpdateForm, AcademicRecordForm
 from account.decorators import student_required, admin_required
 
 @admin_required
@@ -33,27 +33,23 @@ def unauthorized_view(request, exception=None):
 @admin_required
 def student_create(request):
     if request.method == 'POST':
-        form = StudentRegistrationForm(request.POST)
+        form = StudentCreationForm(request.POST)
         if form.is_valid():
-            from account.models import User
-            student = form.save(commit=False)
-            # Créer un utilisateur associé
-            username = f"{student.first_name.lower()}.{student.last_name.lower()}"
-            password = 'admin123'
-            user = User.objects.create_user(
-                username=username,
-                password=password,
-                first_name=student.first_name,
-                last_name=student.last_name
-            )
-            student.user = user
-            student.student_id = f"STD{Student.objects.count() + 1:04d}"
-            student.save()
-            
-            messages.success(request, f'Étudiant créé avec succès. Identifiant: {username}')
-            return redirect('student:student-detail', pk=student.pk)
+            try:
+                student = form.save()
+                messages.success(
+                    request, 
+                    'Étudiant créé avec succès. Un email avec les identifiants de connexion a été envoyé.'
+                )
+                return redirect('student:student-detail', pk=student.pk)
+            except Exception as e:
+                messages.error(
+                    request,
+                    "Une erreur s'est produite lors de la création de l'étudiant. Veuillez réessayer."
+                )
+                print(f"Erreur lors de la création de l'étudiant : {e}")
     else:
-        form = StudentRegistrationForm()
+        form = StudentCreationForm()
     
     context = {
         'form': form,
@@ -118,6 +114,12 @@ def academic_record_update(request, pk):
             return redirect('student:student_detail', pk=academic_record.student.pk)
     else:
         form = AcademicRecordForm(instance=academic_record)
+    
+    return render(request, 'student/academic_record_form.html', {
+        'form': form,
+        'student': academic_record.student,
+        'title': 'Modifier le dossier académique'
+    })
 
 @student_required
 def student_grades(request):
@@ -125,10 +127,14 @@ def student_grades(request):
     student = get_object_or_404(Student, user=request.user)
     # Récupérer tous les dossiers académiques de l'étudiant
     academic_records = student.academic_records.all().order_by('-academic_year', '-semester')
+    # Récupérer toutes les notes individuelles de l'étudiant
+    from grade.models import Grade
+    grades = Grade.objects.filter(student=student).select_related('subject').order_by('-date')
     
     context = {
         'student': student,
         'academic_records': academic_records,
+        'grades': grades,
     }
     return render(request, 'student/student_grades.html', context)
 
@@ -144,12 +150,6 @@ def student_schedule(request):
         # 'schedule': schedule,  # À implémenter selon votre modèle d'emploi du temps
     }
     return render(request, 'student/student_schedule.html', context)
-    
-    return render(request, 'student/academic_record_form.html', {
-        'form': form,
-        'student': academic_record.student,
-        'title': 'Modifier le dossier académique'
-    })
 
 @student_required
 def student_dashboard(request):
