@@ -4,29 +4,12 @@
 
 {% block content %}
 <div class="container">
-    <h1>Mes Matières</h1>
-
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }}">{{ message }}</div>
         {% endfor %}
     {% endif %}
 
-    <div class="add-subject-section">
-        <h2>Ajouter une nouvelle matière</h2>
-        <form method="POST" class="subject-form">
-            {% csrf_token %}
-            <div class="form-group">
-                {{ form.name.label_tag }}
-                {{ form.name }}
-                {% if form.name.errors %}
-                    <div class="error-message">{{ form.name.errors }}</div>
-                {% endif %}
-            </div>
-            {{ form.teacher.as_hidden }}
-            <button type="submit" class="btn primary">Ajouter la matière</button>
-        </form>
-    </div>
 
     <div class="subjects-list">
         <h2>Mes matières actuelles</h2>

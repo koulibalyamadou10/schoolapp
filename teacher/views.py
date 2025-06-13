@@ -4,11 +4,13 @@ from django.contrib import messages
 from django.db.models import Q
 from datetime import datetime, date
 from .models import Teacher, Schedule, Attendance
-from .forms import TeacherProfileForm, ScheduleForm, AttendanceForm
+from .forms import TeacherProfileForm, TeacherCreationForm, ScheduleForm, AttendanceForm
 from subject.models import Subject
+from subject.forms import SubjectForm
 from student.models import Student
 from grade.models import Grade
-from account.decorators import role_required
+from account.models import User
+from account.decorators import role_required, admin_required
 
 @login_required
 def teacher_profile(request):
@@ -53,7 +55,7 @@ def teacher_schedule(request):
             schedule.teacher = teacher
             schedule.save()
             messages.success(request, 'Cours ajouté à l\'emploi du temps')
-            return redirect('teacher_schedule')
+            return redirect('teacher:schedule')
     else:
         form = ScheduleForm()
     
@@ -67,6 +69,8 @@ def teacher_schedule(request):
 def manage_grades(request):
     teacher = get_object_or_404(Teacher, user=request.user)
     subjects = Subject.objects.filter(teacher=teacher)
+
+    print(f"Teacher: {teacher}, Subjects: {subjects}")
     
     if request.method == 'POST':
         student_id = request.POST.get('student')
@@ -84,7 +88,7 @@ def manage_grades(request):
                 date=date.today()
             )
             messages.success(request, 'Note ajoutée avec succès')
-            return redirect('manage_grades')
+            return redirect('teacher:grades')
     
     grades = Grade.objects.filter(subject__in=subjects).order_by('-date')
     students = Student.objects.all()
@@ -127,6 +131,68 @@ def manage_attendance(request):
     })
 
 @login_required
+@role_required(['teacher', 'admin'])
+def teacher_list(request):
+    if request.method == 'POST':
+        # Créer une nouvelle instance de User pour le formulaire
+        user = User()
+        form = TeacherCreationForm(request.POST, instance=user)
+        if form.is_valid():
+            try:
+                teacher = form.save()
+                messages.success(
+                    request, 
+                    'Enseignant ajouté avec succès. Un email avec les identifiants de connexion a été envoyé.'
+                )
+                return redirect('teacher:teacher_list')
+            except Exception as e:
+                messages.error(
+                    request,
+                    "Une erreur s'est produite lors de la création de l'enseignant. Veuillez réessayer."
+                )
+                print(f"Erreur lors de la création de l'enseignant : {e}")
+    else:
+        form = TeacherCreationForm()
+    
+    teachers = Teacher.objects.all().select_related('user')
+    return render(request, 'teacher/teacher_list.html', {
+        'form': form,
+        'teachers': teachers
+    })
+
+@login_required
+@admin_required
+def assign_subjects(request, teacher_id):
+    teacher = get_object_or_404(Teacher, id=teacher_id)
+    
+    if request.method == 'POST':
+        try:
+            # Récupérer les IDs des matières sélectionnées
+            subject_ids = request.POST.getlist('subjects[]') or request.POST.getlist('subjects')
+            
+            # Nettoyer les anciennes assignations
+            Subject.objects.filter(teacher=teacher).update(teacher=None)
+            
+            # Assigner les nouvelles matières
+            if subject_ids:
+                Subject.objects.filter(id__in=subject_ids).update(teacher=teacher)
+            
+            messages.success(request, 'Matières assignées avec succès')
+            return redirect('teacher:teacher_list')
+            
+        except Exception as e:
+            messages.error(request, f"Une erreur s'est produite : {str(e)}")
+            print(f"Erreur lors de l'assignation des matières : {e}")
+    
+    all_subjects = Subject.objects.all()
+    teacher_subjects = Subject.objects.filter(teacher=teacher)
+    
+    return render(request, 'teacher/assign_subjects.html', {
+        'teacher': teacher,
+        'all_subjects': all_subjects,
+        'teacher_subjects': teacher_subjects
+    })
+
 @role_required(['admin', 'teacher'])
 def teacher_dashboard(request):
     teacher = get_object_or_404(Teacher, user=request.user)
@@ -150,4 +216,4 @@ def teacher_dashboard(request):
         'total_grades': total_grades,
         'classes_today': classes_today,
     }
-    return render(request, 'teacher/dashboard.html', context)
+    return render(request, 'teacher/subjects.html', context)
