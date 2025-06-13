@@ -133,7 +133,7 @@ def manage_attendance(request):
     })
 
 @login_required
-@role_required(['teacher', 'admin'])
+@role_required(['admin'])
 def teacher_list(request):
     if request.method == 'POST':
         # Créer une nouvelle instance de User pour le formulaire

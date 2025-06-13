@@ -1,10 +1,12 @@
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.forms import UserCreationForm
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
+from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
 from django.conf import settings
 from account.models import User
+from account.utils import generate_random_password
 from .models import Student, AcademicRecord
 
 class StudentCreationForm(forms.ModelForm):
@@ -79,7 +81,7 @@ class StudentCreationForm(forms.ModelForm):
             counter += 1
             
         # Générer un mot de passe temporaire
-        temporary_password = 'admin123'
+        temporary_password = generate_random_password()
         
         # Créer l'utilisateur
         user = User.objects.create_user(
@@ -109,61 +111,52 @@ class StudentCreationForm(forms.ModelForm):
         
         if commit:
             student.save()
-            self.send_credentials_email(user, temporary_password)
+            send_credentials_email(user, temporary_password)
             
         return student
     
-    def send_credentials_email(self, user, password):
-        """Envoie les identifiants de connexion par email"""
-        try:
-            subject = 'Bienvenue - Vos identifiants de connexion'
-            message = f"""
-Bonjour {user.first_name} {user.last_name},
 
-Votre compte étudiant a été créé avec succès.
+def send_credentials_email(user, password):
+    """Envoie les identifiants de connexion par email"""
+    try:
+        email_subject = 'Bienvenue - Vos identifiants de connexion'
+        
+        context = {
+            'user': user,
+            'password': password,
+            'login_url': f"{getattr(settings, 'SITE_URL', 'http://localhost:8000')}/account/login/",
+            'company_name': getattr(settings, 'COMPANY_NAME', 'SchoolApp'),
+        }
+        
+        # Chargement du template HTML
+        email_body = render_to_string("emails/credentials_email.html", context)
+        
+        # Créer l'email
+        email = EmailMessage(
+            email_subject,
+            email_body,
+            settings.EMAIL_HOST_USER,
+            [user.email],
+        )
 
-Vos identifiants de connexion :
-- Nom d'utilisateur : {user.username}
-- Mot de passe temporaire : {password}
-
-Veuillez vous connecter et changer votre mot de passe lors de votre première connexion.
-
-URL de connexion : {getattr(settings, 'SITE_URL', 'http://localhost:8000')}/account/login/
-
-Cordialement,
-L'équipe administrative
-            """
-
-            print(f"=== DEBUG EMAIL ÉTUDIANT ===")
-            print(f"Destinataire : {user.email}")
-            print(f"Expéditeur : {getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@schoolapp.com')}")
-            print(f"Backend email : {getattr(settings, 'EMAIL_BACKEND', 'Non configuré')}")
-            print(f"Host email : {getattr(settings, 'EMAIL_HOST', 'Non configuré')}")
-            print(f"Port email : {getattr(settings, 'EMAIL_PORT', 'Non configuré')}")
-            print(f"============================")
+        email.content_subtype = 'html'  # Email en format HTML
+        
+        result = email.send(fail_silently=False)
+        
+        print(f"Résultat de l'envoi d'email : {result}")
+        
+        if result == 1:
+            print("Email envoyé avec succès !")
+        else:
+            print("Échec de l'envoi de l'email")
             
-            # Envoi de l'email
-            result = send_mail(
-                subject,
-                message,
-                getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@schoolapp.com'),
-                [user.email],
-                fail_silently=False,
-            )
-            
-            print(f"Résultat de l'envoi d'email étudiant : {result}")
-            
-            if result == 1:
-                print("Email étudiant envoyé avec succès !")
-            else:
-                print("Échec de l'envoi de l'email étudiant")
-                
-        except Exception as e:
-            # Log l'erreur mais ne fait pas échouer la création
-            print(f"ERREUR lors de l'envoi de l'email étudiant : {e}")
-            print(f"Type d'erreur : {type(e).__name__}")
-            import traceback
-            print(f"Traceback complet : {traceback.format_exc()}")
+    except Exception as e:
+        # Log l'erreur mais ne fait pas échouer la création
+        print(f"ERREUR lors de l'envoi de l'email : {e}")
+        print(f"Type d'erreur : {type(e).__name__}")
+        import traceback
+        print(f"Traceback complet : {traceback.format_exc()}")
+
 
 class StudentRegistrationForm(forms.ModelForm):
     class Meta:
