@@ -22,11 +22,7 @@ class StudentCreationForm(forms.ModelForm):
         label="Email",
         widget=forms.EmailInput(attrs={'class': 'form-control'})
     )
-    student_class = forms.CharField(
-        max_length=50,
-        label="Classe",
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
+    student_class = forms.Select(attrs={'class': 'form-control'})
     birth_date = forms.DateField(
         label="Date de naissance",
         widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
@@ -40,12 +36,12 @@ class StudentCreationForm(forms.ModelForm):
         label="Téléphone",
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
-    parent_name = forms.CharField(
+    emergency_contact = forms.CharField(
         max_length=100,
         label="Nom du parent/tuteur",
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
-    parent_phone = forms.CharField(
+    emergency_phone = forms.CharField(
         max_length=20,
         label="Téléphone du parent/tuteur",
         widget=forms.TextInput(attrs={'class': 'form-control'})
@@ -65,8 +61,11 @@ class StudentCreationForm(forms.ModelForm):
         model = Student
         fields = [
             'first_name', 'last_name', 'email', 'student_class', 'birth_date',
-            'address', 'phone', 'parent_name', 'parent_phone', 'medical_info', 'allergies'
+            'address', 'phone', 'emergency_contact', 'emergency_phone', 'medical_info', 'allergies'
         ]
+        widgets = {
+            'student_class': forms.Select(attrs={'class': 'form-control'}),
+        }
 
     def save(self, commit=True):
         # Créer un nouvel utilisateur
@@ -101,8 +100,8 @@ class StudentCreationForm(forms.ModelForm):
             birth_date=self.cleaned_data['birth_date'],
             address=self.cleaned_data['address'],
             phone=self.cleaned_data['phone'],
-            parent_name=self.cleaned_data['parent_name'],
-            parent_phone=self.cleaned_data['parent_phone'],
+            emergency_contact=self.cleaned_data['emergency_contact'],
+            emergency_phone=self.cleaned_data['emergency_phone'],
             medical_info=self.cleaned_data['medical_info'],
             allergies=self.cleaned_data['allergies'],
             student_id=f"STD{Student.objects.count() + 1:04d}"

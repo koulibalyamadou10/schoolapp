@@ -115,6 +115,36 @@
                                 {% endif %}
                             </div>
 
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.parent_name.id_for_label }}" class="form-label">
+                                    {{ form.parent_name.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.parent_name }}
+                                {% if form.parent_name.errors %}
+                                <div class="invalid-feedback d-block">{{ form.parent_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.parent_phone.id_for_label }}" class="form-label">
+                                    {{ form.parent_phone.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.parent_phone }}
+                                {% if form.parent_phone.errors %}
+                                <div class="invalid-feedback d-block">{{ form.parent_phone.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <label for="{{ form.email.id_for_label }}" class="form-label">
+                                    {{ form.email.label }} <span class="text-danger">*</span>
+                                </label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
                             <div class="col-md-6 mb-3">
                                 <label for="{{ form.emergency_contact.id_for_label }}" class="form-label">
                                     {{ form.emergency_contact.label }} <span class="text-danger">*</span>
