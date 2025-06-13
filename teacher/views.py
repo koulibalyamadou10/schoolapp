@@ -26,8 +26,22 @@ def teacher_profile(request):
 @login_required
 def teacher_subjects(request):
     teacher = get_object_or_404(Teacher, user=request.user)
+    if request.method == 'POST':
+        form = SubjectForm(request.POST)
+        if form.is_valid():
+            subject = form.save(commit=False)
+            subject.teacher = teacher
+            subject.save()
+            messages.success(request, 'Matière ajoutée avec succès')
+            return redirect('teacher:subjects')
+    else:
+        form = SubjectForm(initial={'teacher': teacher})
+    
     subjects = Subject.objects.filter(teacher=teacher)
-    return render(request, 'teacher/subjects.html', {'subjects': subjects})
+    return render(request, 'teacher/subjects.html', {
+        'form': form,
+        'subjects': subjects
+    })
 
 @login_required
 def teacher_schedule(request):
@@ -113,7 +127,7 @@ def manage_attendance(request):
     })
 
 @login_required
-@role_required(['teacher'])
+@role_required(['admin', 'teacher'])
 def teacher_dashboard(request):
     teacher = get_object_or_404(Teacher, user=request.user)
     
@@ -136,4 +150,4 @@ def teacher_dashboard(request):
         'total_grades': total_grades,
         'classes_today': classes_today,
     }
-    return render(request, 'account/teacher_dashboard.html', context)
+    return render(request, 'teacher/dashboard.html', context)
