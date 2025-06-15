@@ -1,11 +1,13 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.utils.crypto import get_random_string
 from django.conf import settings
 from account.models import User
+from account.utils import generate_random_password
 from .models import Teacher, Schedule, Attendance
+from django.template.loader import render_to_string
 
 class TeacherProfileForm(forms.ModelForm):
     class Meta:
@@ -61,7 +63,7 @@ class TeacherCreationForm(forms.ModelForm):
         user.role = 'teacher'
         
         # Générer un mot de passe temporaire
-        user.set_password('admin123')
+        user.set_password(generate_random_password())
         
         if commit:
             user.save()
@@ -75,62 +77,51 @@ class TeacherCreationForm(forms.ModelForm):
             )
             
             # Envoyer l'email avec les informations de connexion
-            self.send_credentials_email(user, 'admin123')
+            send_credentials_email(user, 'admin123')
         
         return user
     
-    def send_credentials_email(self, user, password):
-        """Envoie les identifiants de connexion par email"""
-        try:
-            subject = 'Bienvenue - Vos identifiants de connexion'
-            message = f"""
-Bonjour {user.first_name} {user.last_name},
+def send_credentials_email(user, password):
+    """Envoie les identifiants de connexion par email"""
+    try:
+        email_subject = 'Bienvenue - Vos identifiants de connexion'
+        
+        context = {
+            'user': user,
+            'password': password,
+            'login_url': f"{getattr(settings, 'SITE_URL', 'http://localhost:8000')}/account/login/",
+            'company_name': getattr(settings, 'COMPANY_NAME', 'SchoolApp'),
+        }
+        
+        # Chargement du template HTML
+        email_body = render_to_string("emails/credentials_email.html", context)
+        
+        # Création et envoi de l'email
+        # Créer l'email
+        email = EmailMessage(
+            email_subject,
+            email_body,
+            settings.EMAIL_HOST_USER,
+            [user.email],
+        )
 
-Votre compte enseignant a été créé avec succès.
-
-Vos identifiants de connexion :
-- Nom d'utilisateur : {user.username}
-- Mot de passe temporaire : {password}
-
-Veuillez vous connecter et changer votre mot de passe lors de votre première connexion.
-
-URL de connexion : {getattr(settings, 'SITE_URL', 'http://localhost:8000')}/account/login/
-
-Cordialement,
-L'équipe administrative
-            """
-
-            print(f"=== DEBUG EMAIL ===")
-            print(f"Destinataire : {user.email}")
-            print(f"Expéditeur : {getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@schoolapp.com')}")
-            print(f"Backend email : {getattr(settings, 'EMAIL_BACKEND', 'Non configuré')}")
-            print(f"Host email : {getattr(settings, 'EMAIL_HOST', 'Non configuré')}")
-            print(f"Port email : {getattr(settings, 'EMAIL_PORT', 'Non configuré')}")
-            print(f"==================")
+        email.content_subtype = 'html'  # Email en format HTML
+        
+        result = email.send(fail_silently=False)
+        
+        print(f"Résultat de l'envoi d'email : {result}")
+        
+        if result == 1:
+            print("Email envoyé avec succès !")
+        else:
+            print("Échec de l'envoi de l'email")
             
-            # Envoi de l'email
-            result = send_mail(
-                subject,
-                message,
-                getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@schoolapp.com'),
-                [user.email],
-                fail_silently=False,
-            )
-            
-            print(f"Résultat de l'envoi d'email : {result}")
-            
-            if result == 1:
-                print("Email envoyé avec succès !")
-            else:
-                print("Échec de l'envoi de l'email")
-                
-        except Exception as e:
-            # Log l'erreur mais ne fait pas échouer la création
-            print(f"ERREUR lors de l'envoi de l'email : {e}")
-            print(f"Type d'erreur : {type(e).__name__}")
-            import traceback
-            print(f"Traceback complet : {traceback.format_exc()}")
-
+    except Exception as e:
+        # Log l'erreur mais ne fait pas échouer la création
+        print(f"ERREUR lors de l'envoi de l'email : {e}")
+        print(f"Type d'erreur : {type(e).__name__}")
+        import traceback
+        print(f"Traceback complet : {traceback.format_exc()}")
 
 # Garder l'ancien formulaire pour la compatibilité si nécessaire
 class TeacherCreationFormWithPassword(UserCreationForm):
