@@ -1,3 +1,4 @@
+import re
 from django import forms
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.forms import UserCreationForm
@@ -198,10 +199,9 @@ class AcademicRecordForm(forms.ModelForm):
 
     def clean_academic_year(self):
         year = self.cleaned_data['academic_year']
-        if not year.match(r'^\d{4}-\d{4}$'):
+        if not re.match(r'^\d{4}-\d{4}$', year):
             raise forms.ValidationError("Le format de l'année académique doit être YYYY-YYYY (ex: 2023-2024)")
-        start_year = int(year.split('-')[0])
-        end_year = int(year.split('-')[1])
+        start_year, end_year = map(int, year.split('-'))
         if end_year != start_year + 1:
             raise forms.ValidationError("L'année de fin doit être l'année suivante de l'année de début")
         return year
