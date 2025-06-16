@@ -124,7 +124,7 @@ def send_credentials_email(user, password):
         context = {
             'user': user,
             'password': password,
-            'login_url': f"{getattr(settings, 'SITE_URL', 'http://localhost:8000')}/account/login/",
+            'login_url': f"{getattr(settings, 'SITE_URL', 'http://localhost:8001')}/",
             'company_name': getattr(settings, 'COMPANY_NAME', 'SchoolApp'),
         }
         

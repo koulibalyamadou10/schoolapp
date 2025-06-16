@@ -22,7 +22,7 @@ handler401 = 'account.views.unauthorized_view'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('account/', include('account.urls')),
+    path('', include('account.urls')),
     path('student/', include('student.urls')),
     path('teacher/', include('teacher.urls')),
     path('subject/', include('subject.urls')),

@@ -106,24 +106,43 @@ def manage_attendance(request):
     teacher = get_object_or_404(Teacher, user=request.user)
     today = date.today()
     
-    if request.method == 'POST':
-        form = AttendanceForm(request.POST)
-        if form.is_valid():
-            attendance = form.save()
-            messages.success(request, 'Présence enregistrée')
-            return redirect('manage_attendance')
-    else:
-        form = AttendanceForm()
-    
+    # Récupérer les cours d'aujourd'hui pour ce professeur
     schedules = Schedule.objects.filter(
         teacher=teacher,
         day_of_week=today.isoweekday()
-    )
+    ).select_related('subject')
     
+    if request.method == 'POST':
+        form = AttendanceForm(request.POST)
+        if form.is_valid():
+            attendance = form.save(commit=False)
+            # Vérifier que le cours appartient bien à ce professeur
+            if attendance.schedule.teacher == teacher:
+                attendance.save()
+                messages.success(request, 'Présence enregistrée avec succès')
+                return redirect('teacher:attendance')
+            else:
+                messages.error(request, 'Vous n\'êtes pas autorisé à enregistrer des présences pour ce cours')
+    else:
+        # Initialiser le formulaire avec uniquement les cours de ce professeur
+        form = AttendanceForm()
+        form.fields['schedule'].queryset = schedules
+        # Filtrer les étudiants en fonction de la classe du cours sélectionné
+        if request.GET.get('schedule'):
+            selected_schedule = Schedule.objects.get(id=request.GET.get('schedule'))
+            form.fields['student'].queryset = Student.objects.filter(
+                student_class=selected_schedule.classroom
+            )
+    
+    # Récupérer les présences d'aujourd'hui pour les cours de ce professeur
     attendances = Attendance.objects.filter(
         schedule__in=schedules,
         date=today
-    ).select_related('student', 'schedule')
+    ).select_related(
+        'student',
+        'schedule',
+        'schedule__subject'
+    ).order_by('schedule__start_time', 'student__last_name')
     
     return render(request, 'teacher/attendance.html', {
         'form': form,
@@ -156,7 +175,7 @@ def teacher_list(request):
     else:
         form = TeacherCreationForm()
     
-    teachers = Teacher.objects.all().select_related('user')
+    teachers = Teacher.objects.all().order_by('-id').select_related('user')
     return render(request, 'teacher/teacher_list.html', {
         'form': form,
         'teachers': teachers

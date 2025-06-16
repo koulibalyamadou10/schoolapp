@@ -63,7 +63,8 @@ class TeacherCreationForm(forms.ModelForm):
         user.role = 'teacher'
         
         # Générer un mot de passe temporaire
-        user.set_password(generate_random_password())
+        p = generate_random_password()
+        user.set_password(p)
         
         if commit:
             user.save()
@@ -77,7 +78,7 @@ class TeacherCreationForm(forms.ModelForm):
             )
             
             # Envoyer l'email avec les informations de connexion
-            send_credentials_email(user, 'admin123')
+            send_credentials_email(user, p)
         
         return user
     
@@ -89,7 +90,7 @@ def send_credentials_email(user, password):
         context = {
             'user': user,
             'password': password,
-            'login_url': f"{getattr(settings, 'SITE_URL', 'http://localhost:8000')}/account/login/",
+            'login_url': f"{getattr(settings, 'SITE_URL', 'http://localhost:8001')}/",
             'company_name': getattr(settings, 'COMPANY_NAME', 'SchoolApp'),
         }
         
