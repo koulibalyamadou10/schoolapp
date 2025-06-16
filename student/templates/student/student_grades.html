@@ -22,6 +22,13 @@
         </div>
     </div>
     {% endif %}
+    
+    <!-- Bouton d'export PDF -->
+    <div class="export-section mt-3">
+        <a href="{% url 'student:export-my-academic-report-pdf' %}" class="btn btn-success">
+            <i class="fas fa-file-pdf"></i> Télécharger mon bulletin PDF
+        </a>
+    </div>
 </div>
 
 <div class="grades-container">
@@ -154,6 +161,19 @@
         margin: 0 0 0.5rem 0;
         color: #1976d2;
         font-size: 1.2rem;
+    }
+    
+    .export-section {
+        text-align: center;
+        padding: 1rem;
+        background-color: #f0f8ff;
+        border-radius: 8px;
+        border: 2px dashed #4a90e2;
+    }
+    
+    .export-section .btn {
+        font-size: 1.1rem;
+        padding: 0.75rem 1.5rem;
     }
     
     .table {

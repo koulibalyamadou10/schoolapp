@@ -5,3 +5,4 @@ python-decouple
 django-filter
 drf-yasg
 requests
+reportlab

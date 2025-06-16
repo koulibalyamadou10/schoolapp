@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from .models import Student, AcademicRecord
 from .forms import StudentCreationForm, StudentRegistrationForm, StudentUpdateForm, AcademicRecordForm
+from .utils import create_pdf_response
 from account.decorators import student_required, admin_required
 
 @admin_required
@@ -173,3 +174,44 @@ def student_dashboard(request):
         'academic_records': academic_records,
     }
     return render(request, 'account/student_dashboard.html', context)
+
+@login_required
+def export_academic_report_pdf(request, pk):
+    """
+    Exporte le bulletin de notes d'un étudiant au format PDF
+    """
+    student = get_object_or_404(Student, pk=pk)
+    
+    # Vérifier les permissions
+    if request.user.role == 'student' and student.user != request.user:
+        messages.error(request, "Vous n'avez pas l'autorisation d'accéder à ce bulletin.")
+        return redirect('student:unauthorized')
+    elif request.user.role not in ['admin', 'teacher', 'student']:
+        messages.error(request, "Vous n'avez pas l'autorisation d'accéder à cette fonctionnalité.")
+        return redirect('student:unauthorized')
+    
+    # Récupérer les données
+    academic_records = student.academic_records.all().order_by('-academic_year', '-semester')
+    
+    # Récupérer les notes individuelles si disponibles
+    from grade.models import Grade
+    grades = Grade.objects.filter(student=student).select_related('subject').order_by('subject__name', '-date')
+    
+    # Générer et retourner le PDF
+    try:
+        return create_pdf_response(student, academic_records, grades)
+    except Exception as e:
+        messages.error(request, f"Erreur lors de la génération du PDF : {str(e)}")
+        return redirect('student:student-detail', pk=pk)
+
+@login_required
+def export_my_academic_report_pdf(request):
+    """
+    Permet à un étudiant d'exporter son propre bulletin de notes
+    """
+    if request.user.role != 'student':
+        messages.error(request, "Cette fonctionnalité est réservée aux étudiants.")
+        return redirect('account:dashboard')
+    
+    student = get_object_or_404(Student, user=request.user)
+    return export_academic_report_pdf(request, student.pk)

@@ -1,4 +1,3 @@
-
 from django.urls import path
 from . import views
 
@@ -23,6 +22,10 @@ urlpatterns = [
     # Notes et emploi du temps
     path('mes-notes/', views.student_grades, name='student-grades'),
     path('schedule/', views.student_schedule, name='student-schedule'),
+
+    # Export PDF
+    path('<int:pk>/export-pdf/', views.export_academic_report_pdf, name='export-academic-report-pdf'),
+    path('my-report-pdf/', views.export_my_academic_report_pdf, name='export-my-academic-report-pdf'),
 
     path('unauthorized/', views.unauthorized_view, name='unauthorized'),
 ]
