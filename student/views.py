@@ -129,12 +129,19 @@ def student_grades(request):
     academic_records = student.academic_records.all().order_by('-academic_year', '-semester')
     # Récupérer toutes les notes individuelles de l'étudiant
     from grade.models import Grade
+    from django.db.models import Avg
     grades = Grade.objects.filter(student=student).select_related('subject').order_by('-date')
+    
+    # Calculer la moyenne générale de toutes les notes
+    overall_average = grades.aggregate(avg_grade=Avg('grade'))['avg_grade']
+    if overall_average:
+        overall_average = round(overall_average, 2)
     
     context = {
         'student': student,
         'academic_records': academic_records,
         'grades': grades,
+        'overall_average': overall_average,
     }
     return render(request, 'student/student_grades.html', context)
 
