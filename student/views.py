@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -85,23 +86,27 @@ def student_detail(request, pk):
 
 @admin_required
 def academic_record_create(request, student_pk):
-    student = get_object_or_404(Student, pk=student_pk)
-    if request.method == 'POST':
-        form = AcademicRecordForm(request.POST)
-        if form.is_valid():
-            academic_record = form.save(commit=False)
-            academic_record.student = student
-            academic_record.save()
-            messages.success(request, 'Dossier académique créé avec succès.')
-            return redirect('student:student_detail', pk=student_pk)
-    else:
-        form = AcademicRecordForm()
-    
-    return render(request, 'student/academic_record_form.html', {
-        'form': form,
-        'student': student,
-        'title': 'Créer un dossier académique'
-    })
+    try:
+        student = get_object_or_404(Student, pk=student_pk)
+        if request.method == 'POST':
+            form = AcademicRecordForm(request.POST)
+            if form.is_valid():
+                academic_record = form.save(commit=False)
+                academic_record.student = student
+                academic_record.save()
+                messages.success(request, 'Dossier académique créé avec succès.')
+                return redirect('student:student-detail', pk=student_pk)
+        else:
+            form = AcademicRecordForm()
+
+        return render(request, 'student/academic_record_form.html', {
+            'form': form,
+            'student': student,
+            'title': 'Créer un dossier académique'
+        })
+    except Exception as e:
+        return HttpResponse(e)
+
 
 @admin_required
 def academic_record_update(request, pk):
